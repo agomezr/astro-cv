@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import Project from "@layouts/Project.astro";
+import Card from "@components/Card.astro";
+import Pagination from "@components/Pagination.astro";
+import conf from "@conf";
+
+//https://docs.astro.build/es/guides/routing/#paginaci%C3%B3n-anidada
+export async function getStaticPaths({ paginate }) {
+  const allPytos = await getCollection("portfolio", ({ data }) => {
+    return data.tags.length > 0 ? true : false;
+  });
+  const allTags = [...new Set(allPytos.map((pyto: any) => pyto.data.tags).flat())];
+
+  return allTags.flatMap((tag) => {
+    const filteredPosts = allPytos.filter((post) => post.data.tags.includes(tag));
+    // const filteredPosts = allPytos.filter(({data}) => data.tags.includes(tag));
+    return paginate(filteredPosts, {
+      params: { tag },
+      pageSize: conf.paginate
+    });
+  });
+}
+
+const { tag } = Astro.params;
+const { page } = Astro.props as any;
+---
+
+<Project
+  name="Mi Portfolio de Proyectos"
+  desc={`Mi Portfolio de Proyectos de ${tag}, página ${page.currentPage} `}
+  title={`Mi Portfolio de Proyectos de ${tag}, página ${page.currentPage} `}
+>
+  <main>
+    <h1>Portfolio - {tag}</h1>
+    <div id="grid-blog" class="container">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4">
+        {
+          page.data.map((project) => {
+            const { data, slug } = project;
+
+            return (
+              <div class="col mb-3">
+                <Card name={data.name} desc={data.desc} etag="h2" snap={data.snap} link={'/portfolio/'+slug} />
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+    <Pagination page={page}/>
+
+    <p class="text-center py-3">
+      <a href="/portfolio" title="Listado de projectos"  class="link btn btn-primary" >
+        Portfolio
+      </a>
+    </p>
+
+  </main>
+</Project>

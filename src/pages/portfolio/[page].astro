@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import Project from '@layouts/Project.astro';
+import Card from '@components/Card.astro';
+import Pagination from '@components/Pagination.astro';
+import type { GetStaticPathsOptions, Page } from '@node/astro';
+
+import conf from '@conf';
+
+export async function getStaticPaths({ paginate }): Promise<GetStaticPathsOptions> {
+  const allProjects = await getCollection('portfolio');
+  const sortedPortfolio = allProjects.sort((a, b) => {
+    if (a.data.menu < b.data.menu) return 1;
+    if (a.data.menu > b.data.menu) return -1;
+    return 0;
+  });
+
+  return paginate(sortedPortfolio, { pageSize: conf.paginate });
+}
+
+export const menu = 1;
+export const name = "Portfolio";
+export const title = "Portfolio";
+export const desc = "Portfolio";
+
+const { page } = Astro.props as { page: Page };
+---
+<Project description={`Mi Portfolio de Proyectos, página ${page.currentPage}`} title={`Mi Portfolio de Proyectos, página ${page.currentPage}`}>
+
+  <h1>Portfolio de Proyectos</h1>
+  <p class="lead">
+      Proyectos destacados realizados a lo largo de mi trayectoria profesional en diferentes empresas
+  </p>
+
+  <div id="grid-blog" class="container">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4">
+      {
+          page.data.map((project) => {
+              const { data, slug } = project;
+              return  <div class="col mb-3">
+                <Card name={data.name} desc={data.desc} etag="h2" snap={data.snap} link={'/portfolio/'+slug} />
+              </div>
+          })
+      }
+      </div>
+  </div>
+  
+  <Pagination page={page} />
+
+</Project>

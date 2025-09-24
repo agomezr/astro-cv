@@ -1,0 +1,67 @@
+---
+import conf from "@conf"
+import Socials from '@components/Socials.astro';
+
+import Image from "./Image.astro";
+import figura from "@assets/foto-dni.png";
+
+const { view = null, style = 'text-center' } = Astro.props;
+
+const code = Object.entries(conf).reduce((resultado, [clave, valor]) => { 
+	if (typeof valor === 'string') {
+		resultado[clave] = valor.length > 80 ? valor.slice(0, 80) : valor;
+	} else {
+		resultado[clave] = valor; // Or handle numbers differently if needed
+	}
+	return resultado;
+});
+---
+{view === null &&
+		Object.entries(conf).map((item) =>
+		<div class="d-inline-block p-2">
+			<span class="badge bg-black text-bg-black">{item[0]}</span> <code class="mx-1 text-black">{item[1]}</code>
+		</div>
+		)
+}
+{view === 'navs-logo-dektop' && (
+	<Image class="logo-desktop" src={conf.snap} alt={conf.term}/>
+)}
+{view === 'navs-info-desktop' && (
+	<a class="btn btn-warning" data-ga-event="click:contacto=telefono" href="tel:610523169" title={conf.term} rel="noreferrer" target="_blank"> 
+			<span class="bi bi-telephone-outbound-fill" aria-hidden="true"></span>
+			<span class="title d-none d-xl-inline">{conf.phone}</span>
+	</a>
+	<a class="btn btn-success mx-1 fs-lg-5" data-ga-event="click:contacto=whatsapp" href={'https://wa.me/'+conf.chat+'?'+conf.name} title={conf.term}  target="_blank" rel="noopener">
+			<span class="bi bi-whatsapp" aria-hidden="true"></span>
+	</a>
+)}
+{view === 'navs-logo-mobile' && (
+	<Image class="logo-mobile img-fluid" src={figura} alt={conf.term}/>
+)}
+{view === 'navs-info-mobile' && (
+<div class={style}>
+	<Socials />
+</div>
+)}
+{view === 'copy' && (
+<div id="copy" class="d-inline-flex justify-content-center align-items-center py-2">
+	<a class="img-fluid mx-1 text-bg- hover bg-transparent" href="/#main" title="Ir al Inicio" rel="nofollow noindex" >
+		<Image src={conf.favicon} alt={conf.term} class={'d-block spin mx-1 p-0'} width={32} height={32}/>
+	</a>
+	<div class="d-inline-block text-start">
+		<span class="d-block p-0 lh-1 strong title text-bg- bg-transparent" data-href="/" title="Página MasWeb Administrada por expertos en IT y especialistas en sitios web para negocios.">
+			<strong>{conf.term} © 2025</strong>
+		</span>
+		<span class="d-block p-0 lh-1">
+			<small>
+				<span class="small bg-transparent text-bg- text-opacity-50">
+					con Tecnología
+				</span>
+				<a class="text-bg-transparent hover bg-transparent small link" href="https://www.masweb.es/" title={conf.term} target="_blank" >
+					MASWEB.es
+				</a>
+			</small>
+		</span>
+	</div>
+</div>
+)}

@@ -1,0 +1,49 @@
+---
+
+/*
+  <Tags 
+    tags={frontmatter.tags}
+    url ={'/blog/etiquetas/'} 
+    styles={{icon: 'bi bi-0-circle', blockClass:'hstack gap-5 pt-2'}}
+  />
+*/ 
+
+const { 
+  id = 'tags',
+  tags = null , 
+  url = '/blog/etiquetas/',
+  title = 'Listado de etiquetas con la etiqueta',
+  style = {
+    blockClass: 'hstack gap-2 small',
+    icon: 'bi bi-tag-fill',
+    linkClass: 'link'
+  }
+} = Astro.props;
+
+let styles = {
+  ...{
+    blockClass: 'hstack gap-2 small',
+    icon: 'bi bi-tag-fill',
+    linkClass: 'link-opacity-75-hover'
+  },
+  ...style
+}
+---
+
+{ tags &&
+<div id={id} class={styles.blockClass}>
+  {
+    (style.icon) &&
+    <i class={styles.icon} aria-hidden="true"></i>
+  }
+  
+  { (tags) &&
+          tags.map( (tag:string) => {
+                  return <a href={`${url}${tag}`} title={`${title} ${tag}`} 
+                            class={styles.linkClass}>
+                            {tag}
+                          </a>
+          })
+  }
+</div>
+}

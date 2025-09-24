@@ -1,0 +1,72 @@
+---
+import Formacion from "@components/Formacion.astro";
+import Complementaria from "@components/Complementaria.astro";
+import Conocimientos from "@components/Conocimientos.astro";
+import Experiencia from "@components/Experiencia.astro";
+---
+<div class="mx-5">
+<div class="row row-cols-1 row-cols-lg-4 mb-3 d-none d-lg-flex">
+  <div class="col py-2">
+    <a href="#experiencia-profesional" title="Experiencia profesional" 
+      class="btn btn-primary btn-circle mx-xxl-3" target="_self">
+      <i class="bi bi-signpost-split fs-1 text-secondary" aria-hidden="true"></i>
+      <span>Experiencia profesional</span>
+    </a>
+  </div>
+  <div class="col py-2">
+    <a href="#conocimientos-tecnicos" title="Conocimientos Técnicos" 
+      class="btn btn-primary btn-circle mx-xxl-3" target="_self">
+      <i class="bi bi-person-check fs-1 text-secondary" aria-hidden="true"></i>
+      <span>Conocimientos Técnicos</span>
+    </a>
+  </div>
+  <div class="col py-2">
+    <a href="#formacion-complementaria" title="Formación Complementaria" 
+      class="btn btn-primary btn-circle mx-xxl-3" target="_self">
+      <i class="bi bi-patch-check fs-1 text-secondary" aria-hidden="true"></i>
+      <span>Formación Complementaria</span>
+    </a>
+  </div>
+  <div class="col py-2">
+    <a href="#formacion-reglada" title="Formación Reglada" 
+      class="btn btn-primary btn-circle mx-xxl-3" target="_self">
+      <i class="bi bi-award fs-1 text-secondary" aria-hidden="true"></i>
+      <span>Formación</span>
+    </a>
+  </div>
+</div>
+</div>
+
+<hr class="separator"/>
+
+<h2 id="experiencia-profesional" class="mb-2">
+  Experiencia profesional
+</h2>
+<div class="experiencia-profesional">
+  <Experiencia />
+</div>
+
+<hr class="separator"/>
+
+<h2 id="conocimientos-tecnicos" class="mb-2">
+    Conocimientos Técnicos
+</h2>
+<div class="conocimientos-tecnicos">
+  <Conocimientos />
+</div>
+
+<hr class="separator"/>
+
+<h2 id="formacion-complementaria" class="mb-2">
+    Formación Complementaria
+</h2>
+<div class="formacion-complementaria">
+  <Complementaria />
+</div>
+
+<hr class="separator"/>
+
+<h2 id="formacion-reglada" class="mb-2">
+    Formación 
+</h2>
+<Formacion />

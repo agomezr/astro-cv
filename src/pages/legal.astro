@@ -1,0 +1,108 @@
+---
+import Main from '@layouts/Main.astro';
+import conf from "@conf"
+export const name = 'Aviso Legal';
+export const desc = 'Términos y condiciones legales';
+export const none = true;
+---
+<Main title={name+' - '+desc}>
+    <h1 class="h3 title text-uppercase text-center my-4">
+        { name }
+    </h1>
+    <div class="row text-center mb-4">
+        <div class="col-md-10 offset-md-1">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover mx-auto">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center" colspan="4">
+                            <span class="text-muted">{ desc }</span> "<strong>{ conf.term }</strong>"
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="text-end">Empresa</th>
+                        <td class="text-start">{conf.entity }</td>
+                        <th class="text-end">NIF/CIF</th>
+                        <td class="text-start"><span title="NIF/CIF">{ conf.code }</span></td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Dirección</th>
+                        <td class="text-start">{ conf.address }</td>
+                        <th class="text-end">Contacto</th>
+                        <td class="text-start">{ conf.phone } <span class="text-mutted">|</span> { conf.email }</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Localización</th>
+                        <td class="text-start">{ conf.location }</td>
+                        <th class="text-end">Sitio Web</th>
+                        <td class="text-start">{ conf.domain }</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            <br/>
+        </div>
+    </div>
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Condiciones de Uso</h2>
+        <p class="mb-3"><strong>{ conf.entity }</strong>, en adelante: <strong>{ conf.term }</strong>; se reserva el derecho a modificar o eliminar, sin previo aviso, tanto la información contenida en su sitio web como los términos y condiciones de uso sin previo aviso. El usuario será responsable de aportar información veraz y lícita dentro de los servicios de la información prestados en el sitio web y acepta plenamente estos términos y condiciones de forma expresa y sin perjuicio de otras expuestas al navegar por este sitio web.</p>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="h4">Propiedad Intelectual</h3>
+                <p class="mb-3"><strong>{ conf.term }</strong> no se responsabiliza del mal uso que se realice de los contenidos de nuestra página web, siendo exclusiva responsabilidad de la persona que accede a ellos o los utiliza.</p>
+                <p class="mb-3"><strong>{ conf.term }</strong> advierte de que los recursos de producción propia contenidos en <strong>{ conf.domain }</strong> como textos, imágenes, documentos y otros recursos multimedia alojados en el sitio web, así como su imagen,  diseño gráfico y su código fuente están protegidos por la legislación española sobre los <strong>derechos de propiedad intelectual e industrial</strong> y queda <strong>totalmente prohibida</strong> la reproducción, distribución y transformación, total o parcial de estos recursos sin la autorización expresa y clara de <strong>{ conf.term }</strong> mediante solicitud a <strong>{ conf.email }</strong>.</p>
+            </div>
+        </div>
+
+        <p class="mb-3"><strong>{ conf.term }</strong> incluye contenidos y servicios de terceros, por lo que no se hace responsable ni garantiza la licitud, fiabilidad, utilidad, veracidad, exactitud, exhaustividad y actualidad de los mismos, ni será responsable de cualesquiera daños y perjuicios que pudieran derivarse del uso inhadecuado de los mismos.</p>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="h4">Exclusión de Responsabilidad</h3>
+                <p class="mb-3"><strong>{ conf.term }</strong> no garantiza la disponibilidad y continuidad del funcionamiento del sitio web ni de sus contenidos parcial o totalmente, ni se hace responsable de los daños o perjuicios que sus usuarios puedan ocasionar a terceros. Igualmente no asume ni asegura la continuidad del servicio frente a problemas técnicos o fallos informáticos ni daños que pudieran ser causados por terceros mediante intromisiones ilegítimas fuera de control a pesar de haber adoptado todas las medidas tecnológicas necesarias para evitarlo.</p>
+                <p class="mb-0"><strong>{ conf.term }</strong> queda totalmente exonerada de toda responsabilidad ante posibles daños o perjuicios que pueda sufrir el usuario a consecuencia de errores, defectos u omisiones en la información y servicios online cuando procedan de terceros o de un mal uso de su sitio web y se reserva el derecho de exclusión, para denegar o retirar el acceso al sitio web y/o los servicios ofrecidos sin necesidad de preaviso, a instancia propia o de un tercero, a aquellos usuarios que incumplan las presentes <em>condiciones de uso</em>.</p>
+            </div>
+        </div>
+
+        <p class="mb-3"><strong>{ conf.term }</strong> perseguirá el incumplimiento de todas y cada una de las condiciones expuestas, así como cualquier utilización indebida de los contenidos publicados en en este sitio web, ejerciendo si fuera necesario todas las acciones civiles y penales que le puedan corresponder en derecho para proteger sus intereses.</p>
+    </div>
+
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Contenido de Terceros</h2>
+        <p class="mb-3"><strong>{ conf.term }</strong> puede incluir contenido de terceros en sus páginas web, es decir, contenido enlazado o incrustado en <strong>{ conf.domain }</strong> como vídeos, imágenes, textos, enlaces, y otros recursos relacionados a través de otras entidades como las redes sociales.</p>
+        <p class="mb-3">El contenido de terceros se comporta exactamente de la misma manera que si el visitante hubiera visitado la otra web, es decir, durante la navegación por este sitio web puedes encontrar contenido incrustado y enlaces de otros sitios que pudieran ser de su interés, al interactuar (click) con estos elementos dejamos de tener control sobre tu navegación, y por lo tanto, <u>no somos responsables del uso</u> ni de <strong>recursos de terceros</strong> a los que accedes durante tu navegación.</p>
+        <p class="mb-3">Para cualquier duda o aclaración puedes dirigirte a <strong>{ conf.email }</strong>.</p>
+    </div>
+
+    <div class="d-block mb-4">        
+        <h3 class="h3 mb-3">Política de Privacidad</h2>
+        <p class="mb-3"><strong>{ conf.term }</strong> garantiza la confidencialidad y seguridad de los datos facilitados. Todos los datos de carácter personal recogidos en el portal adoptan las medidas necesarias para informar al usuario de sus derechos sobre el almacenamiento y tratamiento autorizado de sus datos de carácter personal; claramente, se informa al usuario de que la información recogida es la justa y precisa para ofrecer servicio y en ningún caso será utilizada con propósitos comerciales ni será cedida a terceros.</p>
+        <p class="mb-3">En cumplimiento con a la legislación vigente en <strong>Protección de Datos de Carácter Personal</strong>, los usuarios podrán ejercitar, en cualquier momento, los derechos “<strong>ARCO</strong>” de acceso, rectificación, oposición y cancelación de sus datos, como el derecho a la portabilidad de datos y el derecho al olvido a través de <strong>{ conf.email }</strong> u otras vías de contacto habilitadas en este sitio web.</p>
+        <p class="mb-3">Para más información consulta la página <a title="Política de Privacidad" href="/privacidad" rel="nofollow"><strong>Política de Privacidad</strong></a> de este sitio web.</p>
+    </div>
+
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Uso de Cookies</h2>
+        <p class="mb-3"><strong>{ conf.term }</strong> usa cookies que permiten la correcta navegación del usuario por <strong>{ conf.domain }</strong> y recogen datos estadísticos completamente anónimos de la visita, se asocian únicamente a un usuario anónimo y su ordenador/dispositivo y no proporcionan referencias que permitan conocer datos personales.</p>
+        <p class="mb-3">Durante la navegación se pueden almacenar cookies de seguimiento adicional de terceros para la supervisión y estadística de tu interacción con el contenido relacionado (enlazado o incrustado) en este sitio web.</p>
+        <p class="mb-3">Para saber más sobre las cookies, consulta la página <a href="#main" data-cc="c-settings" class="cc-link"><strong>Uso de Cookies</strong></a> de este sitio web.</p>
+    </div>
+
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Ley y Jurisdicción</h2>
+        <p class="mb-3">Para toda cuestión litigiosa o que incumba a <strong>{ conf.term }</strong> será de aplicación la legislación española, siendo competentes para la resolución de todos los conflictos derivados o relacionados con el uso de <strong>{ conf.domain }</strong> en los <strong>Juzgados y Tribunales</strong> asignados para <strong>{ conf.location }</strong> o en su defecto a los Tribunales Arbitrales a los que se encuentre adherida.</p>
+        <div class="card mb-4">
+            <div class="card-body">
+                Siempre es responsabilidad del usuario conocer bien las condiciones y términos legales, políticas de privacidad y cookies de los sitioes web por los que navegar, igualmente es importante que conozca los cambios que puedan sufrir estas páginas visitandolas con frecuencia.
+            </div>
+        </div>
+        <p class="mb-3"><strong>{ conf.term }</strong> en cumplimiento con lo dispuesto en la <strong>LSSI</strong> se compromete revisar, corregir y retirar o bloquear contenidos ilítictos o que atenten contra los derechos de terceros, incluso de contenidos enlazados o vinculados a <strong>{ conf.domain }</strong> como redes sociales, blogs, comentarios y valoraciones, colaborando activamente vía <strong>{ conf.email }</strong> con los usuarios del sitio web y las autoridades compententes en materia de los "<u>servicios de la sociedad de información</u>".</p>
+    </div>
+
+    <div class="d-block mb-4">
+        <p class="text-end">Estas condiciones estarán vigentes hasta que sean actualizadas y publicadas de nuevo por <strong>{ conf.term }</strong>.</p>
+    </div>
+</Main>

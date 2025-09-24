@@ -1,0 +1,75 @@
+---
+import type { HTMLTag } from 'astro/types';
+export interface Props { html?: HTMLTag }
+
+const { html: Element = 'div', ...rest } = Astro.props;
+
+/**
+ * Convert type of date to string 'dd/mm/aaaa'
+ */
+export function dateToStr(date: Date): string {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en Date son 0-11
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+/**
+ * Convert 'dd/mm/aaaa' string to type of date
+ */
+export function strToDate(dateString: string): Date | null {
+  const [day, month, year] = dateString.split("/").map(Number);
+  const date: Date = new Date(year, month - 1, day);
+
+  const isValidDate: boolean =
+    date instanceof Date &&
+    !isNaN(date.getTime()) &&
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day;
+
+  return isValidDate ? date : null;
+}
+
+/**
+ * ucFirst: converts the first character in a string to uppercase:
+ */
+ export function ucFirst(str) {
+  if (str) {
+      return String(str)[0].toUpperCase() + String(str).substring(1)
+  }
+}
+
+/**
+ *  ucWords: converts the first character of each word in a string to uppercase.
+ */
+export function ucWords(str, len = 3) {
+  return String(str).toLowerCase().split(' ').map( (ws) => {
+    ws = ws.toLowerCase();
+      return (ws.length > len)? ws[0].toUpperCase() + ws.slice(1): ws;
+    }
+  ).join(' ');
+}
+
+/**
+ * slugify: convert string to a URL-friendly format and replace special characters or spaces with hyphens or underscores
+ */
+export function slugify(str: any, glue = '-') {
+  // <Fragment set:html={'<div>'}/>Welcome<Fragment set:html={'</div>'}/>
+  return String(str)
+    .replace(/\/src\/assets/, '').split('/').join('_') // erase assets repository
+    .replace(/^_/, ' ').replace(/\.[^/.]+$/, ' ') // remove file begin dir and end extension
+    .normalize('NFKD') // split accented characters into their base characters and diacritical marks
+    .replace(/[\u0300-\u036f]/g, '') // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+    .trim() // trim leading or trailing whitespace
+    .toLowerCase() // convert to lowercase
+    .replace(/[^a-z0-9_ -]/g, '') // remove non-alphanumeric characters
+    .replace(/\s+/g, glue) // replace spaces with hyphens
+    .replace(/-+/g, glue) // remove consecutive hyphens
+    ;
+}
+---
+<Element {...rest}>
+  <slot />
+</Element>

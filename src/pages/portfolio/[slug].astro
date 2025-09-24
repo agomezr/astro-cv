@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Project from '@layouts/Project.astro';
+import { image } from '@components/Image.astro';
+import { slugify } from "@components/Tag.astro";
+
+export async function getStaticPaths() {
+  const allProjects = await getCollection('portfolio');
+  return allProjects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { slug } = Astro.params;
+const { name, title, desc, snap, tags } = project.data;
+const { Content } = await project.render();
+---
+
+<Project name={name} title={title} description={desc} snap={snap}>
+
+	<div class="py-3 px-lg-3 position-relative z-0">
+		<div class="w-lg-75" transition:name={`image-${slug}`}
+			style={`min-height: 300px; background: transparent url('${image(snap)}') top center no-repeat; background-size: cover;`}>
+		</div>
+		<div class="position-lg-absolute top-lg-50 start-lg-50 w-lg-50 translate-middle-lg-y ">
+			<div class="animate__animate animate__bounceIn">
+				<div class="position-relative z-3 text-bg-primary p-3 rounded shadow mx-2 mx-lg-0 mt-n3 mt-lg-0">
+					<h1 class="h4 mb-2" transition:name={slugify(name)+slugify(snap)} >{name}</h1>
+					<p class="mb-0">{desc}</p>
+					<div id="tags" class="hstack gap-2 pt-2 small">
+						<i class="bi bi-tag-fill" aria-hidden="true"></i>
+						{ (tags) &&
+								tags.map( (tag:string) => {
+										return <a href={`/portfolio/categoria/${tag}`} title={`Listado de proyectos con la etiqueta ${tag}`} class="link text-bg-primary">{tag}</a>
+								})
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="py-3 px-lg-3">
+			{Content && <Content />}
+	</div>
+
+	<p class="text-center py-3">
+		<a href="/portfolio" title="Listado de projectos"  class="link btn btn-primary" >
+			Portfolio
+		</a>
+  </p>
+
+</Project>

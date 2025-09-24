@@ -1,0 +1,90 @@
+---
+layout: ../../layouts/Blog.astro
+author: Alberto Gómez
+name: Web Almanac 2024 SEO
+term: terms of article 8
+desc: Datos relativos al SEO del informe anual Web Almanac de HTTP Archive para el año 2024
+snap: /noticias/almanac-2024-seo.jpg
+date: 1/02/2025
+tags: ["seo", "almanac", "2024"]
+---
+
+import IntroNoticia from "@components/IntroNoticia.astro";
+import Image from "@components/Image.astro";
+
+<IntroNoticia frontmatter={frontmatter} />
+
+Web Almanac de HTTP Archive es un informe anual exhaustivo sobre el estado de la web, respaldado por datos reales 
+y expertos web de confianza. La edición de 2024 consta de 19 capítulos que abarcan aspectos del contenido de la web, 
+la experiencia del usuario, la publicación y la distribución.
+
+<p class="text-center">
+    <a href="https://almanac.httparchive.org/es/2024/" target="_blank" title="Web Almanac de HTTP Archive, informe 2024" class="btn btn-primary"> Web Almanac </a>
+</p>
+
+
+En este artículo nos centraremos en el posicionamiento orgánico en buscadores (SEO, Search Engine Optimization), qué son los
+Core Web Vitals (CWV), el rendimiento y sus interacciones.
+
+
+<h2>SEO</h2>
+
+Los motores de búsqueda y los sitios web tienen un objetivo común: encontrar a los usuarios dondequiera que estén. En otras palabras
+permitir a las personas interesadas te encuentren antes que a cualquier otro. Para ello, es necesario cumplir unos criterios mínimos
+como diseño responsive, https, robots.txt, Core Web Vitals (CWV), rendimiento, ... . Si se utiliza un gestor de contenidos(CMS) parte de esos 
+elementos están incluidos de serie o pueden incluirse fácilmente, sin embargo, dependiendo de la herramienta e infraestructura
+utilizada, hay aspectos con más proyección de mejora que otros.
+
+<h3>Diseño Responsive</h3>
+
+Hay 6610 millones de usuarios de dispositivos móviles en todo el mundo, y el 69,4% de la población mundial utiliza un dispositivo móvil.
+
+La búsqueda de Google considera que la compatibilidad con dispositivos móviles es un requisito desde 2015 y desde 2023
+el motor de búsqueda se centra en la versión móvil del sitio para realizar la indexación en sus resultados de búsqueda.
+
+Por lo tanto, tener una versión móvil de la web es necesario siendo recomendable un diseño mobile first por delante de versiones
+diferenciadas para ordenador y móvil.
+
+<h3>HTTPS</h3>
+
+El uso de HTTPS como protocolo de encriptado y seguridad se ha mantenido
+estable y sigue creciendo lentamente con un 89% en desktop y 88.9% en móvil. En páginas web corporativas es habitual que el 
+servidor contratado disponga de un certificado como Let´s Encrypt fácilmente instalable y compatible con cualquier CMS.
+
+<p class="img-blog">
+    <Image src="/noticias/https-usage.png" alt="Uso de HTTPS en páginas web de Web Almanac 2024" class="img-fluid"/>
+</p>
+
+<h3>Core Web Vitals</h3>
+
+Las Métricas Web Principales (CWV, Core Web Vitals) introducidas por Google, son una serie de métricas estandarizadas para ayudar a medir 
+cómo un usuario experimenta una página. Están diseñadas para responder a tres preguntas centradas en el usuario relacionadas 
+con el rendimiento:
+
+<ul>
+<li>¿Se está cargando la página? Largest Contentful Paint (LCP).</li>
+<li>¿Es interactiva la página? Interaction to Next Paint (INP).</li>
+<li>¿Es visualmente estable la página? Cumulative Layout Shift (CLS).</li>
+</ul>
+
+<p class="img-blog">
+    <Image src="/noticias/percent-good-cwv-mobile.png" alt="Porcentaje de métricas CWV en móvil de Web Almanac 2024" class="img-fluid"/>
+</p>
+
+Sin entrar en detalle en cada una de ellas, destacamos la ligera evolución positiva, que implica que el rendimiento y los CWV
+cada vez se tienen más en cuenta y su apuesta por parte de los desarrolladores y ecosistema web.
+
+<h3>Datos estructurados</h3>
+
+La mención de este apartado es más una reflexión que un análisis de lo que comenta el informe. 
+
+Los datos estructurados siguen siendo importantes para optimizar muchos sitios. Si bien no es un factor de posicionamiento en sí mismo, 
+impulsa los resultados enriquecidos, especialmente en Google y sistemas análogos.
+
+Estos listados mejorados, a menudo, hacen que un sitio o elementos de él destaquen. Además, los datos estructurados 
+implementados correctamente pueden, por ejemplo, aparecer en otros motores de búsqueda o marketplaces.
+
+La frase anterior, para mi, es de especial importancia ya que con el uso prominente de IA, ofrecer información
+tabulada, ayudará en la difusión de tus productos, servicios o información . En el futuro, tal como avanza la tecnología y la sociedad,
+es posible, que los motores de búsqueda queden obsoletos y el posicionamiento SEO sea sustituido por un posicionamiento
+basado en IA dónde los datos estructurados jugarán un papel primordial.

@@ -1,0 +1,97 @@
+---
+import Blog from '@layouts/Blog.astro';
+import { strToDate } from '@components/Tag.astro';
+import Card from '@components/Card.astro';
+import Pagination from '@components/Pagination.astro';
+import type { GetStaticPathsOptions } from '@node/astro';
+import conf from '@conf';
+export const name = "Articulos";
+export const term = "noticias sobre tecnología web";
+export const desc = "artículos sobre diseño, desarrollo y publicación de páginas y aplicaciones web";
+export const menu = 2;
+interface PostItem {
+  id: string | undefined;
+  data: Record<string, any>; // O un tipo más específico si conoces la estructura de frontmatter
+  url: string;
+  content: any;
+  render: () => Promise<{
+    Content: any;
+    headings: any[]; // Puedes intentar tipar esto más específicamente si es necesario
+    remarkPluginFrontmatter: Record<string, any>; // O un tipo más específico
+  }>;
+}
+export function getCollectionPosts(): PostItem[] {
+  let posts = Object.entries(import.meta.glob('/src/pages/blog/*.mdx', { eager: true }));
+  /*[
+      '/src/pages/blog/post-2.mdx',
+      [Object: null prototype] [Module] { frontmatter: [Getter], getHeadings: [Getter], url: [Getter], file: [Getter], Content: [Getter], default: [Function] }
+    ],
+  */
+  let allPosts = posts.map(
+    ([file, data]: [string, any]) => {
+      const slug = file.split('/').pop()?.replace('.mdx', '');
+      let object = {
+        id: slug, // Puedes usar el slug como ID
+        data: data.frontmatter,
+        url: data.url,
+        file: data.file,
+        body: data.Content(), // Si el plugin de MDX proporciona esto
+        content: data.default, // El contenido del archivo  .mdx
+        render: async () => {
+          return {
+            Content: data.default, // El componente React/Vue del MDX
+            headings: [], // Podrías intentar extraer los encabezados si es necesario
+            remarkPluginFrontmatter: {}, // Información adicional del plugin de remark
+          };
+        },
+      } as any; // Usamos 'any' para simplificar, pero podrías definir un tipo más específico
+
+      return object;
+    }
+  );
+  // Sort posts by type of date
+  return allPosts.sort((a,b) => {
+    if (strToDate(a.data.date) < strToDate(b.data.date)) return 1;
+    if (strToDate(a.data.date) > strToDate(b.data.date)) return -1;
+    return 0;
+  });
+}
+export async function getStaticPaths({ paginate }): Promise<GetStaticPathsOptions> {
+  return paginate(getCollectionPosts(), { pageSize: conf.paginate });
+}
+
+const { page } = Astro.props as any;
+---
+<Blog description={`Noticias y artículos sobre el desarrollo web, página ${page.currentPage}`} title={`Noticias y artículos sobre el desarrollo web, página ${page.currentPage}`}>
+
+  <h1>Blog de noticias</h1>
+  <p class="lead">
+    Noticias, artículos o ideas sobre el desarrollo de aplicaciones o páginas web y el mundo de la tecnología.
+  </p>
+
+  <div id="grid-blog" class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4">
+    {
+      page.data.map((post:any) => {
+          const { data, id } = post;
+          return  <div class="col mb-3">
+            <Card 
+              name={data.name} desc={data.desc}  term={data.date} snap={data.snap} link={'/blog/'+id}
+              etag="h2" class="new" 
+              style={{
+                name: '',
+                desc: '',
+                term: '',
+                snap: 'img-fluid mb-2',
+                icon: 'bi bi-chevron-right',
+                link: 'float-end mb-0 icon-link icon-link-hover stretched-link' }}
+              />
+          </div>
+      })
+    }
+    </div>
+  </div>
+
+  <Pagination page={page} />
+
+</Blog>

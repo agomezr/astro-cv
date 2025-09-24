@@ -1,0 +1,97 @@
+---
+import { Image as AstroImage } from 'astro:assets';
+import { slugify } from '@components/Tag.astro';
+export type AssetImage = { 
+    src: string, 
+    width?: number, 
+    height?: number, 
+    format?: string 
+}
+
+let attrs: any = Astro.props;
+
+export function source(path: string = ''): string{
+    const base = '/src/assets';
+
+    if (!path.startsWith('http') && !path.startsWith('//'))
+    {
+        path = path.replace(base, '');
+        path = (path.startsWith('@'))? path.replace('@', '/src/'): base+path;
+        path = decodeURI(path);
+    }
+
+    return (path == base)? '': path;
+};
+
+export function object(path: string = '', format: string = '', random: boolean = false): AssetImage|string /* | string */ {
+
+    if (path.startsWith('http') || path.startsWith('//')) {
+        return path;
+    }
+
+    type ImageFiles = Record<string, { default: string }>;
+    let fso: ImageFiles = import.meta.glob('/src/assets/**/*.{webp,avif,jpeg,jpg,png,gif,svg}', { eager: true });
+    let snap: any;
+    if (random)
+    {
+        let all = [];
+        if (!format.length)
+            all = Object.values(fso).map((image: any) => (image.default)).filter(image => image.src.includes(path) );
+        else
+            all = Object.values(fso).map((image: any) => (image.default)).filter(image => (image.src.includes(path) && image.format === format));
+
+        snap = all[Math.floor(Math.random() * all.length)];
+    }
+    else // search default by path
+    {
+        snap = Object.entries(fso).find(([key]) => key === path)?.[1]?.default;
+    }
+
+    // is a /src/public image?
+    if (!snap)/* return { src: path.replace('/src/assets/', '/'), format: path.slice(-3) } as AssetImage;*/
+        snap = Object.entries(fso).find(([key]) => key === path)?.[1]?.default;
+
+    if (typeof snap === "string") return { src: snap } as AssetImage;
+
+    return snap as AssetImage;
+}
+
+export function image(img: string, ext: string = '', rnd: boolean = false): string {
+    const media = object(source(img), ext, rnd) as AssetImage;
+    if (!media) throw new Error('Image image() PATH fails on load: "'+img+'"');
+    return media.src;
+}
+
+let snap = null;
+let path = null;
+
+if (attrs.src === undefined) attrs.src = '';
+
+
+if (typeof attrs.src === 'string' || attrs.src instanceof String)
+{
+    const rand = !(''+path+'').includes('.');
+
+    path = source(attrs.src);
+    snap = object(path, attrs.format, rand);
+
+    if (!('class' in attrs) && rand) attrs.class = 'img-fluid';
+}
+else // is object of AstroImage
+{
+    snap = attrs.src;
+    path = attrs.src;
+}
+
+if ('src' in attrs)          delete(attrs.src);
+if (!('alt' in attrs))       attrs.alt = slugify(path);
+if (!('loading' in attrs))   attrs.loading = "lazy";
+if (!('decoding' in attrs))  attrs.decoding = "async";
+
+attrs.inferSize = true; // defaults
+---
+{ ('view' in attrs)?
+    <AstroImage {...attrs} src={snap} transition:name={slugify(path)}/>
+:
+    <AstroImage {...attrs} src={snap}/>
+}

@@ -1,0 +1,107 @@
+---
+import Layout from "@layouts/Main.astro";
+import Info from "@components/Info.astro";
+export const name = "Inicio";
+export const desc = "Página de Inicio";
+
+import figura from "@assets/persondark.png";
+import { Image } from "astro:assets";
+
+---
+
+<Layout>
+  <div class="text-bg-primary pt-6" id="intro">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 col-lg-6 order-lg-last align-self-end">
+          <div class="text-center mb-3 mb-lg-0">
+            <Image
+              src={figura} alt="Figura" class="img-fluid masked"  height="430" transition:name="foto"
+            />
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 pb-5">
+          <h1 class="h2 font-extrabold text-balance pb-0 mb-0">Alberto Gómez</h1>
+          <p class="opacity-50 small text-uppercase">Programador Web Fullstack</p>
+          <p class="lead">
+            Desde hace más de 15 años diseñando, desarrollando y publicando páginas y aplicaciones web.
+          </p>
+          <div class="d-flex align-items-center justify-content-between">
+            <p>
+              <a href="/portfolio" title="Portfolio" class="btn btn-primary">
+                Portfolio <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </a>
+              <a href="/blog" title="Artículos" class="btn btn-outline-white border-primary text-balance ms-2" >
+                Artículos <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </a>
+            </p>
+            <p>
+              <a href="/CV-AGR.pdf" title="Descargar en PDF el currículum vitae de Alberto Gómez Rodríguez" 
+              rel="noopener noreferrer" target="_blank" class="btn btn-success text-balance ms-2" >
+                <i class="bi bi-file-pdf" aria-hidden="true"></i> Descargar CV
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="clip-top"></div>
+
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="text-center">Sobre mí</h2>
+        <div class="d-flex">
+          <div class="d-none d-lg-block mt-n3">
+            <i class="bi bi-quote display-1 text-muted opacity-25 loading" aria-hidden="true"></i>
+          </div>
+          <div class="px-lg-4 px-xl-5 lead">
+            <p>
+              Impulsado por mi deseo de crecimiento profesional fundé mi propia empresa, enfocada en
+              potenciar la presencia online de pequeñas y medianas empresas.
+              Esta etapa no solo demostró mi capacidad de esfuerzo y trabajo,
+              sino que también me permitió desarrollar habilidades cruciales
+              como la relación con clientes y la organización en la gestión de
+              proyectos.
+            </p>
+            <p>
+              A lo largo de 15 años, tanto en mi empresa como de freelance, he participando en diversos 
+              proyectos que han ampliado mis capacidades y alimentado mi curiosidad por la tecnología. Esta
+              trayectoria me ha dotado de una perspectiva única sobre la
+              evolución del sector y las tendencias emergentes.
+            </p>
+            <p>
+              Consciente de la rápida evolución del mercado tecnológico,
+              actualmente estoy centrando mis esfuerzos en el desarrollo
+              frontend con React, Angular y Astro para afrontar en equipo los
+              apasionantes desafíos que se presenten.
+            </p>
+          </div>
+          <div class="align-self-end d-none d-lg-block">
+            <div style="transform:scale(-1, -1)">
+              <i class="bi bi-quote display-1 text-muted opacity-25"  aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="clip-bottom"></div>
+
+  <div class="bg-primary">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="bg-body py-5 px-2 px-lg-3" style="--bs-bg-opacity:.95">
+            <Info />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+</Layout>

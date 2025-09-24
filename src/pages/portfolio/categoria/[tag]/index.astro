@@ -1,0 +1,56 @@
+---
+import Project from '@layouts/Project.astro';
+import { getCollection } from 'astro:content';
+
+import Card from '@components/Card.astro';
+
+export async function getStaticPaths() {
+	const pytos = await getCollection('portfolio', ({ data }) => {
+        return (data.tags.length > 0) ? true: false;
+    });
+    const tags = [ ...new Set(pytos.map((pyto: any) => pyto.data.tags).flat()) ];
+    const pytosByTagPromises = tags.map(async (tag) => { 
+		const pytosByTag = await getCollection('portfolio',({ data }) => {
+			return data.tags.includes(tag);
+		});
+		return {
+			params: { tag },
+			props: { pytos: pytosByTag, tag },
+		};
+    });
+    const pytosByTag = await Promise.all(pytosByTagPromises); // Esperamos a que todas las promesas se resuelvan
+    return pytosByTag;
+}
+
+export const name = 'Proyectos';
+export const title = 'Experiencia demostrable fullstack en proyectos web de negocios';
+export const desc = 'Proyectos destacados realizados a lo largo de mi trayectoria profesional en diferentes empresas';
+
+const {tag} = Astro.params;
+const {pytos} = Astro.props;
+
+// Para forzar el paginado de categorías => "/categoría/TAG"
+return Astro.redirect(`/portfolio/categoria/${tag}/1`);
+// La vista no se ejecuta: return [page].astro => "/categoría/TAG/1"
+---
+<Project name={name} title={title} desc={desc}>
+    <h1>Portfolio de {tag}</h1>
+    <div id="grid-blog" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mb-3">
+    {pytos && 
+		pytos.map( (pyto) => {
+			const { slug, data } = pyto;
+			return  <div class="col">
+						<Card name={data.name} desc={data.desc} etag="h2" snap={data.snap} link={'/portfolio/'+slug} />
+					</div>
+			}
+		)
+	}
+    </div>
+	
+	<p class="text-center py-3">
+		<a href="/portfolio/1" title="Listado de portfolio"  class="link btn btn-primary" >
+			Portfolio
+		</a>
+	</p>
+
+</Project>

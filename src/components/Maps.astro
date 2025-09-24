@@ -1,0 +1,20 @@
+---
+import conf from "@conf"
+
+let { url = conf.gmaps, class: className = "w-100 vh-50 vh-md-50" } = Astro.props;
+
+url = url;
+
+const pid = 'maps-'+Math.random().toString(16).slice(-5);
+---
+<div class={'maps '+className}>
+    <iframe
+        id={pid}
+        style="border:0; width: 100%; height: 100%;"
+        loading="lazy"
+        title="Mapa de Ubicación"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src={url}>
+    </iframe>
+</div>

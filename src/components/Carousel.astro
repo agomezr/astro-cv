@@ -1,0 +1,75 @@
+---
+import Image from './Image.astro';
+import { slugify } from './Tag.astro';
+
+let { class: className = '', path = '', type = ''/* type = 'svg' */, style = 'img-fluid', limit = '0', width = '', height = '', random = false, indicators = true, control = true } = Astro.props;
+
+random = JSON.parse(random);
+indicators = JSON.parse(indicators);
+control = JSON.parse(control);
+
+const { bs = { carousel: 'fade' /* fade|slide|slice */, interval: '5000', ride: 'true', pause: 'false', wrap: 'true'} } = Astro.props;
+
+limit = Number(limit);
+
+let images: any[] = [];
+
+if (Astro.slots.has('default'))
+{
+    const html = await Astro.slots.render('default');
+    images = html.toString().trim().replace(/\s+/g, '\n').split("\n");
+    images.map((slot: string, i: number) => { images[i] = (path+'/'+slot).replace(/\/\//g, '/'); });
+}
+else
+{
+    const fso = import.meta.glob('/src/assets/**/*.(png|jpg|svg|jpeg|webp|avif)', { eager: true,  query: '?url' });
+
+    const all = Object.values(fso).map((image: any) => image.default);
+
+    all.map((image: any) => {
+
+        if (path == '*' || typeof image === 'object' || (typeof image === 'string' && (image.includes(path, 0) && image.includes('.'+type, (-1*(type.length+1))))))
+        {
+            images.push(image);
+        }
+    });
+}
+
+if (random) images = images.sort(() => 0.5 - Math.random());
+
+if (limit) images = images.slice(0, limit);
+
+var pid = 'carousel-' + Math.random().toString(16).slice(-5);
+---
+<div id={pid} class={'carousel slide carousel-'+bs.carousel+' '+className} data-bs-interval={bs.interval} data-bs-ride={bs.ride} data-bs-pause={bs.pause} data-bs-wrap={bs.wrap}>
+    <div class="carousel-inner">
+    {
+        images.map((image, i) => 
+        <div class={'carousel-item' + ((i == 1)? ' active': '') }>
+            <div class="d-flex flex-column flex-nowrap align-items-center">
+                <Image class={style} src={image} width={width} height={height}/>
+            </div>
+        </div>
+        )
+    }
+    </div>
+    { (indicators) && 
+    <div class="carousel-indicators">
+    {
+        images.map((image, i) => 
+            <button data-bs-target={'#'+pid} data-bs-slide-to={i} class={ (i == 1)? 'active': '' } aria-label={slugify(image)}></button>
+        )
+    }
+    </div>
+    }
+    { (control) && 
+    <a class="carousel-control-prev" href={'#'+pid} role="button" data-bs-target={'#'+pid} data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href={'#'+pid} role="button" data-bs-target={'#'+pid} data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </a>
+    }
+</div>

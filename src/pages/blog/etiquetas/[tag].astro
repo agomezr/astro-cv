@@ -1,0 +1,56 @@
+---
+import Blog from "@layouts/Blog.astro";
+import Card from "@components/Card.astro";
+import { getCollectionPosts } from "@pages/blog/[page].astro";
+
+export async function getStaticPaths() {
+  const posts = getCollectionPosts();
+  const tags = [...new Set(posts.map((post: any) => post.data.tags).flat()) ];
+  const paths = tags.map((tag: any) => {
+    return {
+      params: { tag },
+    };
+  });
+  return paths;
+}
+
+export function getPostsTagged() {
+  const posts = getCollectionPosts();
+  return posts.filter((post) => {
+    return ('tags' in post.data)? true: false;
+  });
+}
+
+export function getPostsByTag(tag: string) {
+  const posts = getPostsTagged();
+  return posts.filter((post) => {
+    return post.data.tags.includes(tag);
+  });
+}
+
+const { tag } = Astro.params;
+const posts = getPostsByTag(tag);
+
+return Astro.redirect(`/blog/etiquetas/${tag}/1`);
+---
+<Blog name="Etiquetas de proyectos" title=`Artículos con la etiqueta: ${tag}` desc=`Artículos con la etiqueta: ${tag}`>
+  <div
+    class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-3"
+  >
+    {
+      posts.map((post: any) => {
+        return (
+          <div class="col">
+            <Card name={post.data.name} desc={post.data.desc} etag="h2" snap={post.data.snap} link={post.url} />
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <p class="text-center py-3">
+    <a href="/blog" title="Listado de artículos"  class="link btn btn-primary" >
+      Volver al Blog
+    </a>
+  </p>
+</Blog>

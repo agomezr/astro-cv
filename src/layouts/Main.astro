@@ -1,0 +1,58 @@
+---
+import '@node/bootstrap-icons/font/bootstrap-icons.css';
+import { ClientRouter } from 'astro:transitions'; /* ViewTransitions Mode */
+import conf from '@conf.ts';
+
+import Header from "@layouts/main/Header.astro";
+import Footer from "@layouts/main/Footer.astro";
+import SeoOg from "@layouts/main/SeoOg.astro";
+import Analytics from '@components/Analytics.astro';
+import { image } from '@components/Image.astro';
+
+
+const canonicalURL = new URL(Astro.url.pathname, conf.site);
+
+let { title = conf.name+' - '+conf.term, description = conf.desc, class: className = 'main container-fluid g-0', snap= conf.image, frontmatter = null } = Astro.props;
+if (frontmatter) {
+	title = frontmatter.name+' - '+frontmatter.term;
+	description = frontmatter.desc;
+	if(frontmatter.snap) snap = frontmatter.snap;
+}
+---
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content={conf.themeColor} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="expires" content="0" />
+		<meta http-equiv="pragma" content="no-cache" />
+		<link rel="canonical" href={canonicalURL}/>
+		<SeoOg title={title} url={canonicalURL} description={description} snap={snap} alt={title}/>
+		<link rel="icon" type="image/svg+xml" href={image(conf.favicon)} />
+		<link href="/bootstrap-min.css" rel="stylesheet"/>
+		<link href="/cookies-min.css" rel="stylesheet"/>
+		<ClientRouter/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto&display=swap" rel="stylesheet">
+
+	</head>
+	<body>
+		<Header/>
+		<main id="main" class={className}>
+			<div class="row g-0">
+				<div class="col-12">
+					<slot />
+				</div>
+			</div>
+		</main>
+		<Footer/>
+		<script src="@node/bootstrap/dist/js/bootstrap.bundle.min.js"/>
+		<Analytics ua={conf.ua_code}/>
+	</body>
+</html>

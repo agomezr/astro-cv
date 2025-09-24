@@ -1,0 +1,159 @@
+---
+layout: ../../layouts/Blog.astro
+author: Alberto Gómez
+name: Grids en Tailwind
+term: Grids en Tailwind
+desc: La forma de crear grids en Tailwind es más flexible y ágil que la de Bootstrap
+snap: /noticias/bootstrap-vs-tailwind.jpg
+date: 7/08/2025
+tags: ["css", "web", "bootstrap", "tailwind"]
+---
+
+import IntroNoticia from "@components/IntroNoticia.astro";
+import Image from "@components/Image.astro";
+
+<IntroNoticia frontmatter={frontmatter} />
+
+En una entrada anterior comenté que para la maquetación global de una web o aplicación Bootstrap era más eficiente que el uso de Tailwind. Bootstrap incluye componentes ya maquetados o con un aspecto visual ya terminado, desde un botón a elementos como acordeones. Tailwind, por su filosofía, incluye clases utilitarias. Una abstracción de css a clases que te permiten maquetar sin crear líneas de css.
+
+Sin embargo, el uso que hacemos los maquetadores de tailwind puede hacer bastante disparatado el aspecto visual de una aplicación que ha sido desarrollada por varios programadores, y más aún si está creada en componentes.
+
+No se suele tener en cuenta desde el inicio, que los márgenes o padding sean comunes o que un elemento como un formulario con sus labels e inputs tengan una visual general.
+
+Sin embargo, el uso de Tailwind para maquetar responsive es bastante más flexible y ágil que el que puede ofrecernos Bootstrap de base o con sus helpers.
+
+<h2>Bootstrap</h2>
+
+El framework Bootstrap nos proporciona un grid basado en flex de 12 columnas (modificable si compilas el scss)
+
+```scss
+// /bootstrap/scss/variables.scss
+$grid-columns:                12 !default;
+$grid-gutter-width:           1.5rem !default;
+$grid-row-columns:            6 !default;
+```
+
+Su uso es sencillo, fijo y bastante lógico porque las 12 columnas te pueden dar bloques iguales de 6/12, 4/12, 3/12, 2/12, 1/12 o combinaciones como 5/12 y 7/12. También tienes los offset y los order para manejar
+desplazamientos en el grid u ordenación en los diferentes breakpoints responsive.
+
+```HTML
+<div class="container">
+    <div class="row">   
+        <div class="col-12 col-md-4 col-lg-5">
+            Primer bloque
+        </div>
+        <div class="col-12 col-md-7 offset-md-1 col-lg-6">
+            Segundo bloque
+        </div>
+    </div>
+</div>
+```
+<p class="text-center">
+    <a href="https://getbootstrap.com/" target="_blank" title="Documentación de Bootstrap" class="btn btn-primary"> Bootstrap </a>
+</p>
+
+
+<h2>Tailwind CSS</h2>
+
+Este framework no utiliza javascript final, se centra solo en las hojas de estilo y en optimizar el peso de estas, 
+por lo que si una clase no es utilizada en el proyecto no será cargada en las hojas de estilo.
+
+Para maquetaciones de bloques responsive es más flexible y ágil que Bootstrap como vamos a descubrir con los siguientes ejemplos.
+
+<h3>Flex de 1/3 desde tablet</h3>
+
+flex flex-col md:flex-row gap-4 >>> w-full md:w-1/3
+
+- El elemento padre de los items es flex en columna pero en md pasa a fila con un gap de 4
+- Los items ocupan todo su ancho desde md pasan a 1/3 cada uno
+
+```HTML
+<section className="my-6">
+    <h2 className="font-bold text-2xl">Flex  de 1/3 desde tablet</h2>
+
+    <div className="flex flex-col md:flex-row gap-4 my-6">
+        <div className="w-full md:w-1/3 border-3 border-yellow-500 p-3">Item 1</div>
+        <div className="w-full md:w-1/3 border-3 border-yellow-500 p-3">Item 2</div>
+        <div className="w-full md:w-1/3 border-3 border-yellow-500 p-3">Item 3</div>
+    </div>
+</section>
+```
+
+<h3>Flex tipo BS + Order</h3>
+
+flex flex-col md:flex-row gap-3 >>> order-1 md:w-7/12
+
+- El elemento padre de los items es flex en columna pero en md pasa a fila con un gap de 3
+- Las columnas usan el grid tipo Bootstrap con 12 espacios desde md y cambian su orden.
+
+```HTML
+<section className="my-6">
+    <h2 className="font-bold text-2xl">Flex tipo BS + Order</h2>
+
+    <div className="flex flex-col md:flex-row gap-3">
+        <div className="md:order-2 md:w-7/12 xl:w-8/12 border-4 border-sky-500 p-3">
+            Primera columna
+        </div>
+        <div className="md:order-1 md:w-5/12 xl:w-4/12 border-4 border-sky-500 p-3">
+            Segunda columna
+        </div>
+    </div>
+</section>
+```
+
+<h3>Grid con columnas auto en elemento padre</h3>
+
+md:grid md:grid-flow-col md:auto-cols-fr gap-3
+
+- El elemento padre es grid desde md con hijos distribuidos como columnas del mismo ancho y gap de 3
+
+```HTML
+<section className="my-6">
+    <h2 className="font-bold text-2xl">Grid con columnas auto en elemento padre</h2>
+
+    <div className="md:grid md:grid-flow-col md:auto-cols-fr gap-3">
+        <div className="border-4 border-sky-500 p-3 mb-3">001</div>
+        <div className="border-4 border-sky-500 p-3 mb-3">002</div>
+        <div className="border-4 border-sky-500 p-3 mb-3">003</div>
+    </div>
+
+</section>
+```
+
+<h3>Flex + Grid con columnas definidas + colspan</h3>
+
+flex flex-col md:grid md:grid-cols-3 gap-4 >>> md:col-span-2
+
+- En móvil es flex con elementos ordenados uno después de otro
+- En md es grid de 3 elementos por fila con un gap de 4
+- Varios elementos hijos ocupan más espacio por el col-span-*
+
+```HTML
+<section className="my-6">
+    <h2 className="font-bold text-2xl">Flex + Grid con columnas definidas + colspan</h2>
+
+    <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
+        <div className="p-3 border-3 border-yellow-500">01</div>
+        <div className="p-3 border-3 border-yellow-500">02</div>
+        <div className="p-3 border-3 border-yellow-500">03</div>
+        <div className="md:col-span-2 xl:col-span-3 border-3 border-yellow-500 p-3">04</div>
+        <div className="border-3 border-yellow-500 p-3">05</div>
+        <div className="border-3 border-yellow-500 p-3">06</div>
+        <div className="col-span-2 border-3 border-yellow-500 p-3">07</div>
+        <div className="col-span-3 border-3 border-yellow-500 p-3">08</div>
+    </div>
+
+</section>
+```
+
+<p class="text-center">
+    <a href="https://tailwindcss.com/" target="_blank" title="Documentación de tailwindcss" class="btn btn-primary"> Tailwind </a>
+</p>
+
+<h2>Conclusión</h2>
+
+A pesar de ser un firme defensor de Bootstrap, el apartado de maquetación responsive de Tailwind es muy versátil 
+y gana en fluidez y resultado al ofrecido por Bootstrap.
+
+Recordemos que una de las principales características de Tailwind es que solo carga la css que se utiliza por lo 
+que aunque ambas herramientas diesen el mismo resultado Tailwind vencería en el apartado de rendimiento.

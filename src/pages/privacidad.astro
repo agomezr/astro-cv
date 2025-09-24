@@ -1,0 +1,108 @@
+---
+import Main from '@layouts/Main.astro';
+import conf from "@conf"
+export const name = 'Política de privacidad';
+export const desc = 'Tratamiento de datos personales';
+export const none = true;
+---
+<Main title={name+' - '+desc}>
+    <h1 class="h3 title text-uppercase text-center my-4">
+        { name }
+    </h1>
+
+    <div class="d-block mb-4">
+        <p class="mb-3">
+            <strong>{ conf.term }</strong> usa y protege la información que es proporcionada por sus usuarios al momento de utilizar <strong>{ conf.domain }</strong> siguiendo una estricta política de privacidad para asegurar que los datos personales que manejamos estén siempre bajo la transparencia y dentro del marco legal aplicable, informando de los derechos, obligaciones, finalidad y procesos en cualquier recogida de <strong>datos de caracter personal</strong>.
+        </p>
+        <p class="mb-3">
+            Los <strong>datos de carácter personal</strong> sólo podrán obtenerse para su tratamiento cuando sean necesarios, adecuados, pertinentes y no excesivos en relación con el ámbito y las finalidades determinadas, explícitas y legítimas para las que se soliciten. 
+            Se utilizan sólo y exlucisvamente para desarrollar la actividad y serán eliminados cuando hayan dejado de ser útiles para dicha finalidad, o cuando lo solicite el titular de los mismos.
+        </p>
+    </div>
+
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Datos de carácter personal</h2>
+        <p class="mb-3"><strong>{ conf.term }</strong> recoge y trata datos personales e información con la <strong>finalidad</strong> de ejecución de un servicio o respuesta al contacto realizado a través de <strong>{ conf.domain }</strong>, es decir, el justo y necesario para poder cumplir con nuestra obligación contractual siempre bajo el interés legítimo del usuario o bien, el consentimiento expreso, inequívoco e informado del interesado, en caso de no existir una relación contractual previa.</p>
+        <p class="mb-3">Los datos personales tratados por <strong>{ conf.term }</strong> se conservarán durante el <strong>tiempo</strong> necesario para cumplir con la finalidad para la que se recaban a través de <strong>{ conf.domain }</strong> por interés del usuario, además de los períodos establecidos según las obligaciones legales en la normativa de archivos y documentación.</p>
+        <p class="mb-3">No compartimos los datos que recogemos, por mínimos que sean con ningún tercero, la <strong>cesión</strong> de datos es <strong>nula</strong> a excepción de que sea requisito legal indispensable para cumplir con la ley vigente o aquellos datos anónimos procedentes de analíticas y/o publicidad que nos sirven para medir el tráfico de visitas. Cualquier duda o aclaración, puede dirigirse a <strong>{ conf.email }</strong>.</p>
+        <br/>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="h4 my-2">Uso de Formularios</h3>
+                <p class="mb-3">Al enviar cualquier <strong>formulario</strong>, recibimos un email o mensaje con los datos facilitados voluntariamente, el tratamiento que realizamos de estos datos es el justo y necesario para poder atender los correos electrónicos según los <strong>intereses legítimos</strong> del usuario y bajo su <strong>consentimiento informado</strong> y tras haber obtenido su aceptación sobre las <strong>políticas de privacidad</strong> aquí expuestas.</p>
+                <hr/>
+                <p class="mb-3">Manejamos sólo la información estrictamente esencial para contactar con el usuario, datos proporcionados por el mismo junto con su <strong>consentimiento informado</strong> que determina la aceptación para poder responder al usuario o darle el servicio indicado en el formulario.</p>
+                <p class="mb-3">Todos los datos recogidos electrónicamente, serán conservados el tiempo extrictamente necesario para cumplir con el servicio y la finalidad descrita hasta un <strong>periodo máximo de un año</strong> sin perjucio de otros acuerdos contactuales.</p>
+                <p class="mb-3">En ningún caso tratamos de forma automática los datos personales, ni cedemos la información contenida en los mensajes de correo electrónico ya sean del formulario web o conversaciones mantenidas con el usuario en respuesta al sevicio.</p>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="h4 my-2">Uso de Cookies</h3>
+                <p class="mb-3"><strong>{ conf.term }</strong> usa cookies para mejorar la navegación del usuario por <strong>{ conf.domain }</strong> mediante variables de configuración y datos estadísticos de la visita completamente anónimos, a continuación encontrarás información detallada sobre qué son las cookies, qué tipos de cookies utilizamos, qué finalidad tienen y cuanto tiempo permanecen en tu dispositivo.</p>
+                <hr/>
+                <p class="mb-3">Este sitio web utiliza <strong>Google Analytics</strong>, un servicio analítico de web prestado por Google, Inc. mediante el <strong>uso de cookies</strong> para ayudar al website a analizar el uso que hacen los usuarios del sitio web. Podrá transmitir dicha información a terceros cuando así se lo requiera la legislación y en ningún caso se asociará su dirección IP con ningún otro dato del que disponga <strong>Google</strong>.</p>
+                <p class="mb-3">Para más información consulte la <a title="Política de Privacidad de Google" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de Privacidad de Google </a> en su sitio web.</p>
+                <hr/>
+                <p class="mb-3">Adicionalmente puedes bloquear y desactivar las cookies en tu navegador o bien evitar la instalación permanente de cookies por parte de terceros en tu dispositivo usando el <strong>modo incógnito</strong> de tu navegador.</p>
+            </div>
+        </div>
+        <p class="mb-3">Para saber más sobre las cookies, consulta la página <a href="#main" data-cc="c-settings" class="cc-link"><strong>Uso de Cookies</strong></a> de este sitio web.</p>
+    </div>
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Medidas de Seguridad</h2>
+        <p class="mb-3">Adoptamos <strong>directrices</strong> de seguridad adecuadas de índole técnica y organizativa necesarias para garantizar la integridad y seguridad de los <strong>datos de carácter personal</strong> y para garantizar su cifrado y evitar su tratamiento, alteración, pérdida, robo o acceso no autorizado.</p>
+        <ul>
+        <li>Establecemos <strong>protocolos</strong> de actuación sobre los <strong>sistemas</strong> y la <strong>tecnología</strong> empleados que velan por el derecho al honor, la intimidad y la propia imagen, dada la naturaleza de los datos y los riesgos a los que están expuestos para garantizar la confidencialidad, integridad, disponibilidad y resiliencia permanentes de los sistemas y servicios de tratamiento de información.</li>
+        <li>Las medidas empleadas respecto a <strong>la seguridad en Internet</strong> no son completamente inexpugnables, cualquier comunicación o información enviada por la red es susceptible de ser interceptada, y por lo tanto, deberás extremar las cautelas al navegar por Internet.</li>
+        <li>En caso de existir una <strong>brecha de seguridad</strong> o producirse una <strong>violación de seguridad</strong> que ponga en peligro los datos de caracter personal de los usuarios de este sitio web, se pondrá en conocimiento de la <strong>Agencia Española de Protección de Datos</strong> y se adoptarán todas la medias necesarias para informar a los usuarios implicados y evitar futuras intrusiones.</li>
+        <li>La intervención por parte de terceros como proveedores de servicios, profesionales técnicos o colaboradores del sitio web, estará previamente autorizada por compromiso de <strong>secreto profesional</strong> y / o <strong>acuerdo de confidencialidad</strong>.</li>
+        </ul>
+    </div>
+
+    <div class="d-block mb-4">
+        <h3 class="h3 mb-3">Derechos y Obligaciones del Usuario</h2>
+        <p class="mb-3">
+            El <strong>usuario</strong> posee siempre plena capacidad de <strong>A</strong>cceso, <strong>R</strong>ectificación, <strong>C</strong>ancelación y <strong>O</strong>posición como son el derecho a la <u>portabilidad</u> de datos y el derecho al <u>olvido</u> de sus datos de caracter personal.
+            El organismo competente para que el usuario pueda obtener más información, realizar reclamaciones o cualquier otra consulta relacionada con su privacidad es la <strong>AEPD</strong> o "<u>Agencia Española de Protección de Datos</u>.
+        </p>
+
+        <div class="card mb-4">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    Si la información personal facilitada por el usuario a <strong>{ conf.term }</strong> es a través de un acceso privado vía <strong>{ conf.domain }</strong>, este podrá ejercer todos sus derechos <strong>ARCO</strong> a través de cuenta mediante acceso seguro (usuario/contraseña) y de forma privada.
+                </li>
+                <li class="list-group-item">
+                    Si la información personal facilitada por el usuario a <strong>{ conf.term }</strong> se realiza por otra vía y el usuario no dispone de una cuenta o acceso privado vía <strong>{ conf.domain }</strong>, el usuario podrá ejercer sus derechos <strong>ARCO</strong> por la misma vía empleada (correo electrónico).
+                </li>
+            </ul>
+        </div>
+
+        <p class="mb-3">
+            <strong>{ conf.term }</strong> pone a disposición del interesado vía <strong>{ conf.email }</strong> 
+            la resolución de consultas y operaciones sobre el <strong>tratamiento de datos de carácter personal</strong> 
+            a la atención del "<u>responsable de datos personales</u>" del sitio web <strong>{ conf.domain }</strong>.
+        </p>
+
+        <div class="card mb-4">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    El <strong>usuario</strong> es el único responsable de la veracidad y corrección de los datos proporcionados, exonerándose <strong>{ conf.term }</strong> de cualquier responsabilidad al respecto que pudiera derivar de la información facilitada.
+                </li>
+                <li class="list-group-item">
+                    El <strong>usuario</strong>, en cada caso, garantiza y responde de la exactitud, vigencia y autenticidad de los datos personales facilitados a través de la web o cualquiera de sus servicios, y además, se compromete a mantenerlos debidamente actualizados.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="d-block mb-4">
+        <p class="mb-3">
+            Por disposición legal, los <strong>menores de 14 años</strong> de edad, no podrán usar los servicios de este sitio web que recogen datos personales, al menos que estén autorizados por sus padres o tutores legales, quienes son los únicos responsables de los datos aportados en la web.
+        </p>
+    </div>
+
+    <div class="d-block mb-4">
+        <p class="text-end">Por favor, consulte nuestro <a title="Aviso Legal" href="/legal" rel="nofollow"><strong>Aviso Legal</strong></a> para obtener más información.</p>
+    </div>
+</Main>

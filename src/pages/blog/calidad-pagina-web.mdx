@@ -1,0 +1,106 @@
+---
+layout: ../../layouts/Blog.astro
+author: Alberto Gómez
+name: Calidad medible en páginas web
+term: terms of article 8
+desc: La calidad de una página web es medible gracias a la existencia de herramientas que califican aspectos técnicos
+snap: /noticias/psi_960.png
+date: 01/01/2025
+tags: ["calidad", "web"]
+---
+
+import IntroNoticia from "@components/IntroNoticia.astro";
+import Image from "@components/Image.astro";
+
+<IntroNoticia frontmatter={frontmatter} />
+
+¿Mi página web está bien hecha?
+
+La calidad de una página web puede ser medida debido a la existencia de herramientas y test que proporcionan
+información objetiva sobre aspectos técnicos de la misma.
+
+El diseño de páginas web engloba un conjunto de tareas a realizar antes de la publicación y puesta en marcha de
+una web. Si desde el comienzo del proyecto nos enfocamos a buscar un buen posicionamiento siguiendo las
+<a href="https://developers.google.com/search/docs/essentials?hl=es" title="Directrices básicas de la Búsqueda de Google">directrices de Google</a> 
+(que es el principal motor de búsqueda en Internet) conseguiremos un doble
+objetivo: mejorar la calidad de la web y aumentar el posicionamiento orgánico.
+
+<ul class="list-inline justify-content-around w-lg-75 m-auto text-center mb-4">
+  <li class="list-inline-item">
+    <a href="#nibbler" target="_self" title="Test de nibbler" class="ganchor btn btn-outline-primary"> Nibbler </a>
+  </li>
+  <li class="list-inline-item">
+    <a href="#pagespeed" target="_self" title="Test de pagespeed" class="ganchor btn btn-outline-primary"> Pagespeed </a>
+  </li>
+</ul>
+
+
+<h2 id="nibbler">Nibbler</h2> 
+
+<p class="img-blog">
+  <Image src="/noticias/nibbler-masweb.jpg" class="img-fluid"/> 
+</p>
+
+Nibbler es una <strong>herramienta gratuita</strong> para evaluar la calidad de las páginas web. 
+Realiza un <strong>informe completo</strong> sobre diferentes aspectos como accesibilidad, 
+experiencia de usuario, posicionamiento SEO, popularidad, comportamiento del servidor, enlaces y 
+tecnología empleada. 
+
+Una puntuación global por encima del 8.0 es lo recomendable y dependiendo 
+de la tecnología utilizada y conocimientos del diseñador web se podrán alcanzar mejores puntuaciones. 
+
+Si utilizas Wordpress u otro gestor de contenidos la calidad base de dichas herramientas influirán 
+en los valores obtenidos en los test que presentamos a continuación. 
+
+<p class="text-center mb-4">
+  <a class="btn btn-primary" href="https://nibbler.co/" title="Test de nibbler" target="_blank" rel="noopener noreferer">Test de nibbler</a> 
+</p>
+
+
+<h2 id="pagespeed">PageSpeed Insights de Google</h2> 
+
+<div class="hstack gap-2 mb-2">
+  <div class="">
+    <Image src="/noticias/ps-cv-mobile.png" class="img-fluid mb-2"/> 
+  </div>
+  <div class="">
+    <Image src="/noticias/ps-cv-desktop.png" class="img-fluid mb-2"/> 
+  </div>
+</div>
+
+En PageSpeed Insights se proporcionan datos sobre el <strong>rendimiento de carga de las páginas web</strong> 
+teniendo en cuenta que desde mediados de 2019 predomina la valoración en móvil a fin de realizar la indexación 
+y clasificación en el buscador (posicionamiento SEO). 
+
+Por ello, debemos asegurarnos que tanto la visualización móvil como la del resto de dispositivos contengan
+la misma información y el rendimiento sea alto en dispositivos móviles. 
+
+Las métricas que esta herramienta ofrece se categorizan en los siguientes bloques:
+
+<ul> 
+  <li>Rendimiento</li> 
+  <li>Accesibilidad</li> 
+  <li>Buenas prácticas</li> 
+  <li>Posicionamiento SEO</li> 
+</ul> 
+
+<p class="text-center mb-4">
+  <a class="btn btn-primary" href="https://pagespeed.web.dev/" title="PageSpeed Insights de Google para evaluar el rendimiento" target="_blank" rel="noopener noreferer">Test PageSpeed Insights</a> 
+</p>
+
+
+<h2>Resultados en Test de calidad web</h2> 
+
+Las puntuaciones reflejan valores objetivos clave de un sitio web, es decir, que sus páginas 
+sigan las mejores metodologías para una variedad de métricas diferentes, como compatibilidad con HTTPS(seguridad),
+que no existan errores de código, que se utilice cache en el navegador y demás elementos no necesariamente correlacionados
+con el aspecto visual. 
+
+Para <strong>comparar</strong> los resultados obtenidos en los tests de forma directa podemos introducir 
+las direcciones de otras web similares y compararlas con nuestro dominio. Este trabajo nos sirve para evaluar nuestro
+posicionamiento SEO con respecto a las web comparadas. El <strong>posicionamiento</strong> es la capacidad de que una página web 
+pueda ser indexada por los motores de búsqueda y alcance la mejor posición en dichos resultados. 
+
+Es recomendable <strong>testear</strong> periódicamente para comprobar variaciones en los resultados debido a 
+los cambios realizados en la web, las actualizaciones de los tests y la evolución de internet. 
+  

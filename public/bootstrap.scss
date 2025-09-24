@@ -1,0 +1,828 @@
+/* 
+** BS CUSTOM ···
+*/
+$font-text:     "Lato", sans-serif;
+$font-title:    "Roboto", sans-serif;
+$font-display:  "Lato", sans-serif;
+$font-icon:     'bootstrap-icons';
+$font-size:     12pt; 
+
+$primary:   #0055FF;
+$secondary: #FF005A;
+$custom:    #00FA05;  
+$white:     #FFFFFF;
+$black:     #000000;
+$light:     #F0F2F4;
+$dark:      #0F2F4F;
+
+// $link-color:        $black;
+$link-decoration:   none;
+$link-hover-color:  $primary;
+
+$body-bg:     #F2F2F2;
+$body-color:  #4C4C4C;
+
+$body-color-dark: #dee2e6;
+$body-bg-dark:   #0E2340;
+
+$body-secondary-color:      rgba($body-color, .85) ;
+ 
+$lead-font-size: 1rem * 1.55 !default;
+$headings-line-height: 1.33em !default;
+
+$font-family-sans-serif: $font-text !default;
+$nav-tabs-border-radius: 0 !default;
+$progress-height: 3px !default;
+
+$enable-shadows: true !default;
+$enable-gradients: true !default;
+$enable-negative-margins: true !default;
+$enable-cssgrid: true !default;
+$viewport-all: true !default;
+
+$form-check-input-checked-color: $body-color !default;
+
+$h1-font-size: 2.55rem !default;
+$h2-font-size: 1.85rem !default;
+$h3-font-size: 1.45rem !default;
+$h4-font-size: 1.15rem !default;
+$h5-font-size: 1.05rem !default;
+$h6-font-size: 1rem !default;
+
+// Extend BS spacers: margin, padding, gap
+$spacers: (
+    0: 0,
+    1: (1rem * 0.3),
+    2: (1rem * 0.7),
+    3: (1rem * 1.5),
+    4: (1rem * 3),
+    5: (1rem * 5),
+    6: (1rem * 9),
+) !default;
+
+// Extend BS breakpoints: w, h, vw, vh
+$sizes: (
+    15: 15%,
+    25: 25%,
+    30: 30%,
+    40: 50%,
+    50: 50%,
+    60: 60%,
+    70: 70%,
+    75: 75%,
+    85: 85%
+) !default;
+
+// Extend BS font sizes: fs-1, display-2, h3
+$display-font-sizes: (
+    1: 7.44rem,
+    2: 5.22rem,
+    3: 2.88rem,
+    4: 1.55rem,
+    5: 1.11rem,
+    6: 0.88rem,
+) !default;
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+@import "../node_modules/bootstrap/scss/maps"; 
+
+:root {
+    // BS-4 compatibility var(--breakpoint-xy) -- BS-5 var(--bs-breakpoint-xy)
+    @each $bp, $value in $grid-breakpoints { --breakpoint-#{$bp}: #{$value}; }
+}
+
+// Extend BS colors and text styles
+$custom: mix(complement($primary), invert($secondary), 50%) !default;
+
+$transparent: transparent !default;
+
+$colorize: (
+  "custom":      $custom,
+  "black":       $black,
+  "white":       $white,
+  "transparent": $transparent
+) !default;
+
+$colors: map-merge($theme-colors, $colorize);
+$theme-colors: map-merge($theme-colors, $colorize);
+$theme-colors-text: map-merge($theme-colors, $colorize);
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+$utilities-text: map-merge($theme-colors, $utilities-text);
+$utilities-text-colors: map-loop($utilities-text, rgba-css-var, "$key", "text");
+$utilities-border: map-merge($utilities-colors, $theme-colors-rgb);
+$utilities-border-colors: map-loop($utilities-border, rgba-css-var, "$key", "border");
+$utilities-bg: map-merge($theme-colors, $utilities-bg);
+$utilities-bg-colors: map-loop($utilities-bg, rgba-css-var, "$key", "bg");
+
+// BS OVERLOAD TOOLS
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/mixins/banner";
+
+/*
+** GoTo: smooth scroll to anchor
+*/
+:global(html) { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } }
+
+html { scroll-padding-top: 80px; }
+@include media-breakpoint-up(md){ html { scroll-padding-top: 120px; } }
+
+/*
+** Brs: responsive breaking-returns
+*/
+@include media-breakpoint-down(xl) { .br-lg br { display: none !important; } }
+@include media-breakpoint-down(lg) { .br-md br { display: none !important; } }
+@include media-breakpoint-down(md) { .br-sm br { display: none !important; } }
+@include media-breakpoint-up(xl) { .br-alt-lg br { display: none !important; } }
+@include media-breakpoint-up(lg){ .br-alt-md br { display: none !important; } }
+@include media-breakpoint-up(md){ .br-alt-sm br { display: none !important; } }
+
+
+/*
+** Responsive width and height: "w-md-50 w-lg-70 h-50" ++ @bootstrap-extended
+*/
+$wsizes: ();
+$hsizes: ();
+@each $i,$size in $sizes {
+    $wsizes: map-merge($wsizes, ($i: #{$i}vw));
+    $hsizes: map-merge($hsizes, ($i: #{$i}vh));
+}
+
+$utilities: map-merge(
+    $utilities,
+    (
+        "width": map-merge(
+            map-get($utilities, "width"),
+            (
+                values: map-merge( map-get(map-get($utilities, "width"), "values"), ($sizes) ),
+                responsive: true,
+            ),
+        ),
+        "max-width": map-merge(
+            map-get($utilities, "max-width"),
+            (
+                values: map-merge( map-get(map-get($utilities, "max-width"), "values"), ($sizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "viewport-width": map-merge(
+            map-get($utilities, "viewport-width"),
+            (
+                values: map-merge( map-get(map-get($utilities, "viewport-width"), "values"), ($wsizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "min-viewport-width": map-merge(
+            map-get($utilities, "min-viewport-width"),
+            (
+                values: map-merge( map-get(map-get($utilities, "min-viewport-width"), "values"), ($wsizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "height": map-merge(
+            map-get($utilities, "height"),
+            (
+                values: map-merge( map-get(map-get($utilities, "height"), "values"), ($sizes) ),
+                responsive: true,
+            ),
+        ),
+        "max-height": map-merge(
+            map-get($utilities, "max-height"),
+            (
+                values: map-merge( map-get(map-get($utilities, "max-height"), "values"), ($sizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "viewport-height": map-merge(
+            map-get($utilities, "viewport-height"),
+            (
+                values: map-merge( map-get(map-get($utilities, "viewport-height"), "values"), ($hsizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "min-viewport-height": map-merge(
+            map-get($utilities, "min-viewport-height"),
+            (
+                values: map-merge( map-get(map-get($utilities, "min-viewport-height"), "values"), ($hsizes) ),
+                responsive: $viewport-all,
+            ),
+        ),
+        "position-relative": ( responsive: true, property: position, class: position, values: relative
+        ),
+        "position-absolute": ( responsive: true, property: position, class: position, values: absolute
+        ),
+        "start": map-merge(
+            map-get($utilities, "start"),
+            ( responsive: true )
+        ),
+        "top": map-merge(
+            map-get($utilities, "top"),
+            ( responsive: true )
+        ),
+        "end": map-merge(
+            map-get($utilities, "end"),
+            ( responsive: true )
+        ),
+        "translate-middle": map-merge(
+            map-get($utilities, "translate-middle"),
+            ( responsive: true ) 
+        )
+    )
+);
+
+/*
+** Extra Offcanvas contents (footer)
+*/
+@include media-breakpoint-up(xl){ .navbar-expand-xl .offcanvas .offcanvas-footer { display: none; } }
+
+// BS CONFIGURATION
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+
+// BS ALL COMPONENTS
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/containers";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/tables";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/transitions";
+@import "../node_modules/bootstrap/scss/dropdown";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/nav";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/card";
+@import "../node_modules/bootstrap/scss/accordion";
+@import "../node_modules/bootstrap/scss/breadcrumb";
+@import "../node_modules/bootstrap/scss/pagination";
+@import "../node_modules/bootstrap/scss/badge";
+@import "../node_modules/bootstrap/scss/alert";
+@import "../node_modules/bootstrap/scss/progress";
+@import "../node_modules/bootstrap/scss/list-group";
+@import "../node_modules/bootstrap/scss/close";
+@import "../node_modules/bootstrap/scss/toasts";
+@import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/bootstrap/scss/tooltip";
+@import "../node_modules/bootstrap/scss/popover";
+@import "../node_modules/bootstrap/scss/carousel";
+@import "../node_modules/bootstrap/scss/spinners";
+@import "../node_modules/bootstrap/scss/offcanvas";
+@import "../node_modules/bootstrap/scss/placeholders";
+
+// BS API HELPERS + UTILITIES
+@import "../node_modules/bootstrap/scss/helpers";
+@import "../node_modules/bootstrap/scss/utilities/api";
+
+/*
+** RESET STYLES -- all in projects
+*/
+body {
+    font-display: swap;
+    overflow-x: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+header, main, footer {
+    min-width: 345px;
+}
+#sidebar {
+    @include media-breakpoint-down(sm) {
+        min-width: 345px;
+    }
+}
+header nav.navbar { background-image: none;}
+
+main
+{
+    font-size: $font-size;
+    min-height: 85vh;
+    a, .link { text-decoration: $link-decoration; }
+}
+
+h1, .h1, h2, .h2, h3, .h3 { font-family: $font-title; font-weight: $font-weight-normal; }
+
+.text     { font-family: $font-text !important; }
+.title    { font-family: $font-title !important; }
+.display  { font-family: $font-display !important; }
+.code     { font-family: $font-family-monospace !important; }
+
+.icon {
+    font-family: $font-icon !important;
+    &:after, &:before {
+        align-self: center !important;
+        vertical-align: middle !important;
+    }
+}
+
+.beta { outline: 2px dotted shade-color($secondary, 15%); background-color: tint-color($primary, 85%); }
+.lead   { font-family: $font-title; font-size: 1.15rem; line-height: 1.45em; }
+.tiny { font-size: .7rem; }
+.text-condensed { letter-spacing: 0.05em; }
+.text-spaced    { letter-spacing: 0.1em; }
+.text-balance   { text-wrap: balance; }
+.text-shadow    { text-shadow: 0 0 0.05em $black; }
+.em     { width: 1em; height: 1em;  line-height: 1em; }
+.rem    { width: 1rem; height: 1rem; line-height: 1rem; }
+
+.favicon { max-width: 64px; min-height: 32px; }
+.popover { min-width: 320px; max-width: 100%; }
+
+.hover {
+    cursor: inherit;
+    transition: all 0.2s ease-in-out;
+    &:hover { cursor: pointer !important; }
+}
+
+/* Listas */
+.list-group {
+    .list-group-item { background-color: transparent; }
+}
+
+ul.list, ol.list {
+    li {
+        line-height: 1.3em;
+        &:not(:last-child){ padding-bottom: 0.3em; }
+    }
+}
+ul.list { list-style: disc outside; }
+
+ul.list-alt, ol.list-alt {
+    list-style: none outside;
+    padding-left: 0.8rem;
+    li {
+        position: relative;
+        line-height: 1.5em;
+        &:before /* @customize-it */ 
+        {
+            position: absolute; top: 0; left: -1.5em;
+            font-family: $font-icon; font-size: 1em;
+            content: "\f26b";
+        }
+        &:not(:last-child) {
+            padding-bottom: 0;
+        }
+    }
+}
+
+ul.list-chevron, ol.list-chevron {
+    list-style: none outside;
+    padding-left: 0.5rem;
+    margin-bottom: 0px;
+    > li {
+        position: relative;
+        line-height: 1.5em;
+        margin-bottom: .5em;
+        &:before /* @customize-it */
+        {
+            position: absolute; top: -2px; left: -1.2em;
+            font-family: $font-icon; font-size: 1em;
+            content: "\F285";
+        }
+        &:not(:last-child) {
+            padding-bottom: 0;
+        }
+    }
+}
+
+/* Efecto sonar */
+.sonar { animation: sonar 1.5s infinite; }
+@keyframes sonar {
+  0% { box-shadow: 0 0 0 0 rgba(0, 185, 255, 0.2); }
+  100% { box-shadow: 0 0 0 1.5em rgba(0, 0, 0, 0); }
+}
+
+#goto {
+    background: rgba(var(--bs-body-bg-rgb), 0.75 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 7px );
+    -webkit-backdrop-filter: blur( 7px );
+    border-radius: 100%;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+
+/*
+** Overlay responsive: "overlay overlay-md-top" ++ @bootstrap-extended
+*/
+@each $breakpoint in map-keys($grid-breakpoints) {
+    @include media-breakpoint-up($breakpoint) {
+        $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+        .overlay#{$infix} {
+            position: absolute !important;
+            width: 100%; height: auto;
+            top: 50% !important; left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            transform-style: preserve-3d;
+        }
+        .overlay#{$infix}-top {
+            position: absolute !important;
+            width: 100% ; height: auto;
+            top: 0% !important; bottom: auto !important; left: 50% !important;
+            transform: translate(-50%,-0%) !important;
+            transform-style: preserve-3d;
+        }
+        .overlay#{$infix}-bottom {
+            position: absolute !important;
+            width: 100%; height: auto;
+            bottom: 0% !important; top: auto !important; left: 50% !important;
+            transform: translate(-50%,0%) !important;
+            transform-style: preserve-3d;
+        }
+    }
+}
+
+/*
+ Glassmorphism effect
+*/
+.glass {
+    background: rgba(var(--bs-body-bg-rgb), 0.75 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 7px );
+    -webkit-backdrop-filter: blur( 7px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+/* btn circle*/
+.btn-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    aspect-ratio: 1;
+    i {
+        transition: all .5s ease-in-out;
+    }
+    &:hover {
+        box-shadow: var(--bs-box-shadow);
+        > i {
+            transform: scale(1.2);
+        }
+    }
+}
+
+/*
+** Pic Reveal effect 
+*/
+$reveal-duration: 0.5s !default;
+$reveal-duration-reverse: 1s !default;
+$reveal-delay: 0.5s !default;
+$reveal-delay-reverse: 1.5s !default;
+@keyframes revealTop {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(-1%);
+    }
+}
+@keyframes revealRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+@keyframes revealBottom{
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+@keyframes revealLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+.pic-reveal {
+    position: relative; overflow: hidden;
+    .reveal {
+        width: 100%; height: 100%;
+        animation-timing-function: ease-in-out;
+        animation-duration: $reveal-duration;
+        animation-delay: $reveal-delay;
+        animation-fill-mode: forwards;
+        &:before {
+            content: '';
+            position: absolute; top: 0; left:0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background-color: #000;
+            z-index: 2;
+        }
+        @each $color, $value in $theme-colors {
+            &.reveal-#{$color}:before {
+                background-color: rgba($value, 1) !important;
+            }
+        }
+        
+        &.animate__animated, &.animate {
+            &.reveal-top {
+                transform: translateY(-100%);
+                animation-name: revealTop;
+                &:before { 
+                    animation: revealTop $reveal-duration-reverse reverse $reveal-delay-reverse forwards;
+                }
+            }
+            &.reveal-right {
+                transform: translateX(100%);
+                animation-name: revealRight;
+                &:before { 
+                    animation: revealRight $reveal-duration-reverse reverse $reveal-delay-reverse forwards;
+                }
+            }
+            &.reveal-bottom {
+                transform: translateY(100%);
+                animation-name: revealBottom;
+                &:before { 
+                    animation: revealBottom $reveal-duration-reverse reverse $reveal-delay-reverse forwards;
+                }
+            }
+            &.reveal-left {
+                transform: translateX(-100%);
+                animation-name: revealLeft;
+                &:before { 
+                    animation: revealLeft $reveal-duration-reverse reverse $reveal-delay-reverse forwards;
+                }
+            }
+        }
+    }
+}
+
+[data-bs-theme="dark"] body.blog, 
+[data-bs-theme="dark"] body.project
+{
+    background: var(--bs-body-bg) url('/fondos/gemini_.png') top center no-repeat;
+    background-size: cover;
+}
+
+body.blog,
+body.project {
+    background: var(--bs-body-bg) url('/fondos/gemini.png') top center no-repeat;
+    background-size: cover;
+}
+
+#header {
+    background: linear-gradient(to bottom, rgba(var(--bs-dark-rgb), 100%) 50%, rgba(var(--bs-dark-rgb),30%) 100%);
+    .brand { width: 55px; }
+}
+
+
+#navigation {
+    background-image: none;
+    text-transform: uppercase;
+    .nav-link {
+        color: rgba(255,255,255,0.6);
+        font-weight: bolder;
+        &:hover{
+            color: rgba(255,255,255,0.9);
+            text-shadow: 1px 1px var(--bs-primary);
+        }
+    }
+}
+
+#navsOffCanvas.show {
+    background: rgba(var(--bs-dark-rgb), 0.6 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 7px );
+    -webkit-backdrop-filter: blur( 7px );
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+        .offcanvas-header {
+            a.img-fluid {
+                width: 80px;
+            }
+        }
+        .navbar-nav {
+            text-align: center; 
+            .nav-link {
+                color: rgba(255,255,255,0.9);
+                text-shadow: 1px 1px var(--bs-primary);
+                font-weight: bolder;
+                margin: 10px;
+                    border-radius: 1rem;
+                    background-color: var(--bs-btn-bg) ;
+                    background-image: var(--bs-gradient);
+            
+                &:hover {
+                    color: yellow;
+                }
+            }
+        }
+}
+
+body.blog main {
+    h1,.h1,h2,.h2,h3,.h3,h4,.h4 { margin-bottom: 1rem; }
+    p { margin-bottom: 1.5rem; }
+    .img-blog {
+        @include media-breakpoint-up(md){
+            max-width: 70%;
+            margin-inline: auto;
+        }
+        @include media-breakpoint-up(xxl){
+            max-width: 60%;
+        }
+    }
+}
+
+#intro {
+    position: relative;
+    z-index:1;
+    // background: linear-gradient(to bottom, rgba(var(--bs-primary-rgb), 50%) 0%, rgba(var(--bs-dark-rgb),50%) 100%);
+    background: linear-gradient(to bottom, rgba(var(--bs-dark-rgb), 50%) 0%, rgba(var(--bs-dark-rgb),60%) 100%);
+    
+    &:after {
+        content:'';
+        position: absolute; inset:0;
+        width: 100%; height: 100%;
+        // background: transparent url('/keyboard.jpg') top center no-repeat;
+        background: transparent url('/fondos/fondo6.jpg') center center no-repeat;
+        background-size: cover;
+        @include media-breakpoint-up('lg'){
+            background-attachment: fixed;
+        }
+        opacity: 1;
+        z-index:-1;
+    }
+    > * {
+        position:relative;
+        z-index:2;
+    }
+}
+
+
+hr.separator {
+    height: 1px !important; width:100%; margin: 1rem auto;
+    border: none;
+    background-image: -webkit-linear-gradient(left, transparent, $primary 15%, $secondary 50%, $primary 85%, transparent); 
+    background-image: linear-gradient(to right, transparent, $primary 15%, $secondary 50%, $primary 85%, transparent);
+    background-color: transparent;
+}
+
+.card {
+    .card-title > * {
+        font-size: 1.2rem;
+        margin-bottom: 0px;
+    }
+    .card-text {
+        font-size: 0.9rem;
+    }
+}
+
+#grid-blog{
+    .card {
+        border: none;
+        // background-color: rgba(var(--bs-body-rgb), 0.1)!important;
+        background-color: rgba(var(--bs-body-color-rgb), 0.1)!important;
+        backdrop-filter: blur( 3px );
+        -webkit-backdrop-filter: blur( 3px );
+        transition: all 0.5s ease;
+        img {
+            transform: scale(.95);
+            border-radius: .35rem;
+            transition: all 0.5s ease;
+        }
+        .stretched-link {
+            font-size:.7rem;
+            opacity:.7;
+            transition: all 0.75s ease;
+            &.icon-link > .bi {
+                line-height: 1em;
+            }
+        }
+        &:hover {
+            box-shadow:var(--bs-box-shadow);
+            background-color: rgba(var(--bs-body-color-rgb), 0.05)!important;
+            backdrop-filter: blur( 10px );
+            -webkit-backdrop-filter: blur( 10px );
+            transition: all 0.5s ease;
+            img{
+                transform: scale(1);
+                border-radius: 0;
+                transition: all 0.75s ease;
+            }
+            .stretched-link{
+                opacity:.9;
+            }
+        }
+    }
+}
+
+.experiencia-profesional,
+.conocimientos-tecnicos,
+.formacion-complementaria {
+    position: relative;
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+    &:after {
+        @include media-breakpoint-down(md) {
+            font-size: 30vh;
+        }
+        font-family: $font-icon;
+        font-size: 50vh; line-height: normal;
+        position: absolute;
+        bottom:0; right: 0;
+        color: rgba(150,150,150,.15);
+        z-index: 1;
+    }
+}
+.experiencia-profesional:after { content:'\F549'; }
+.conocimientos-tecnicos:after { content:'\F4D6'; }
+.formacion-complementaria:after { content:'\F4B6'; }
+
+.masked {
+    mask-image: linear-gradient(to top,rgba(0,0,0,0.01) 2%,  #000 10%);
+    -webkit-mask-image: linear-gradient(to top,rgba(0,0,0,0.01) 2%, #000 10%);
+}
+.clipped {
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    transition: clip-path 1s;
+}
+
+.clip-top {
+    --clip-color: var(--bs-body-bg);
+    position:relative;
+    height: 50px;
+    margin-top: -49px;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background-color: var(--clip-color);
+    z-index:1;
+    transition: all 0.2s ease-in-out;
+}
+
+.clip-bottom {
+    --clip-color: var(--bs-body-bg);
+    position:relative;
+    height: 50px;
+    margin-bottom: -49px;
+    clip-path: polygon(0% 0%, 100% 0%, 50% 100%,);
+    background-color: var(--clip-color);
+    z-index:1;
+    transition: all 0.2s ease-in-out;
+}
+
+.new {
+    
+    .card-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: -0.7rem;
+        .text-desc {
+            margin-bottom: .5rem;
+            order:2;
+        }
+        .text-term {
+            order:1;
+            font-size: .7rem;
+            opacity: 0.5;
+            margin-left: auto;
+        }
+        a {
+            margin-left: auto;
+            order:3;
+        }
+    }
+    
+}
+
+
+#footer {
+    background-color: darken($light, 5%);
+}
+
+/*
+    Scroll bar
+    https://css-tricks.com/custom-scrollbars-in-webkit/
+*/
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--bs-body-color-rgb), 0.7);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 3px rgba(darken($primary, 20%), 0.6);
+    border-radius: 4px;
+}

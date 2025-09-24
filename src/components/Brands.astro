@@ -1,0 +1,131 @@
+---
+import Image from '@components/Image.astro';
+
+let { 
+    path = '' /* path = '/media/' */, 
+    format = '' /* format = 'svg' */, 
+    width = '160', 
+    height = '160', 
+    class: className = 'bg-transparent', 
+    style = '', 
+    limit = '0', 
+    speed = 'auto', 
+    pause = false, 
+    random = false
+} = Astro.props;
+
+limit = Number(limit);
+
+let images: any[] = [];
+
+if (Astro.slots.has('default'))
+{
+    const html = await Astro.slots.render('default');
+    images = html.toString().trim().replace(/\s+/g, '\n').split("\n");
+    images.map((slot: string, i: number) => { images[i] = (path+'/'+slot).replace(/\/\//g, '/'); });
+}
+else
+{
+    const fso = import.meta.glob('/src/assets/**/*.(png|jpg|svg|jpeg|webp|avif)', { eager: true });
+
+    const all = Object.values(fso).map((image: any) => image.default);
+
+    all.map((image: any) => {
+        if (!format && typeof image === 'object' && image.src.includes(path, 0))
+        {
+            images.push(image);
+        }
+        else if (typeof image === 'object' && image.src.includes(path, 0) && image.format === format)
+        {
+            images.push(image);
+        }
+    });
+}
+
+if (random) images = images.sort(() => 0.5 - Math.random());
+
+if (limit) images = images.slice(0, limit);
+
+const count = images.length;
+const slideHover = (pause)? 'paused': 'running';
+const slideWidth = width+'px';
+const slideHeight = height+'px';
+const slideCount = count;
+const slideSpeed = (speed == 'auto')? (count/0.3)+'s' :speed+'s';
+
+let color = 'white';
+if (className.includes('bg-')) color = className.slice(className.indexOf('bg-')+3, (className+' ').indexOf(' ')).trim();
+
+const bgColor = 'var(--bs-'+color+')';
+---
+<div class={'brand '+className}>
+    <div class="brand-slider">
+        <div class="brand-slides">
+            {
+                images.map((image) => <div class={'brand-slide '+style}><Image src={image} width={width} height={height} /></div>)
+            }
+            {
+                images.map((image) => <div class={'brand-slide '+style}><Image src={image} width={width} height={height} /></div>)
+            }
+            {
+                images.map((image) => <div class={'brand-slide '+style}><Image src={image} width={width} height={height} /></div>)
+            }
+        </div>
+    </div>
+</div>
+<style define:vars={{slideWidth, slideHeight, slideSpeed, slideHover, slideCount, bgColor}}>
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 15vh;
+    gap: 15px;
+}
+@keyframes scrollHorizontal {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc((-1) * var(--slideWidth) * var(--slideCount)))}
+}
+.brand-slider {
+    background: transparent;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-height: var(--slideHeight);
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        height: var(--slideHeight);
+        width: var(--slideWidth);
+        z-index: 2;
+    }
+    &::after {
+        right: 0;
+        top: 0;
+        height: 100%;
+        transform: rotateZ(180deg);
+        background: linear-gradient(to right, var(--bgColor), transparent) !important;
+
+    }
+    &::before {
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: linear-gradient(to right, var(--bgColor), transparent) !important;
+    }
+    .brand-slides {
+        animation: scrollHorizontal var(--slideSpeed) linear infinite;
+        display: flex;
+        width: calc(var(--slideWidth) * var(--slideCount) * 2);
+    }
+    .brand-slides:hover {
+        animation-play-state: var(--slideHover);
+    }
+    .brand-slide {
+        margin: 30px;
+        height: var(--slideHeight);
+        width: var(--slideWidth);
+    }
+}
+</style>

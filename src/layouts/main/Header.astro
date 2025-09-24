@@ -1,0 +1,131 @@
+---
+import Image from '@components/Image.astro';
+import Navigation from '@components/Navigation.astro';
+import Extras from '@components/Extras.astro';
+import conf from "@conf"
+import ThemeSwitch from '@components/ThemeSwitch.astro';
+const {} = Astro.props;
+
+import logo from '/public/logo-light.png';
+---
+<header id="header" class="scroller fixed-top" data-scrolled="active">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <a class="navbar-brand brand d-flex align-items-center my-2" href="/" title={conf.term}>
+                <img src={logo.src} alt={conf.name} class="img-fluid" />
+            </a>
+            <div class="d-inline-flex justify-content-end align-items-center">
+                <div class="order-last order-xl-first">
+                    <Navigation media="lg"/>
+                </div>
+                <div class="order-last ms-2 ms-lg-3">
+                    <ThemeSwitch />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="progress" class="progress bg-transparent border-0">
+        <div class="progress-bar bg-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Barra de progreso de lectura"></div>
+    </div>
+</header>
+<script>
+/*
+** Progress Bar on scroll window contents
+* <div id="progress" class="progress">
+*      <div class="progress-bar bg-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Barra de progreso de lectura"></div>
+* </div>
+*/
+var progress = function () {
+
+    var getPercent = function () {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;  
+        return ((winScroll / height) * 100) + '%';
+    };
+
+    var progress = document.querySelector('#progress.progress > div, #progress.scroller[data-scrolled=progress] > div');
+
+    if (progress == null) { return; }
+
+    document.addEventListener('scroll', () => {
+        (progress as HTMLElement).style.width =  getPercent();
+    });
+
+    window.addEventListener('resize', () => {
+        (progress as HTMLElement).style.width =  getPercent();
+    });
+
+    if (getPercent() == '0%') {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+};
+
+/*
+ ** Scroller Detection Effect: Set class to element or call a function at user window.scroll event
+ * data-scroll: 100 => Launch the event at 100px user scroll
+ * <header class="scroller sticky-top | fixed-top" data-scrolled="active" data-scroll="200">···</header>
+ * <div id="goto" class="position-fixed scroller" data-scroll="500" data-call="bienvenida">
+ * ###todo: remove event listener. Pero necesitamos que no sea una funcion anónima en el Event Listener
+ */
+function scrollToggler(item, offset, style, scrolled, scrolling) {
+    if (scrolled && scrolling === 'DOWN' && window.scrollY >= (item.offsetHeight + offset)) {
+        item.classList.add(style);
+        return true;
+    } else if (scrolled && scrolling === 'UP' && window.scrollY < (item.offsetHeight + offset)) {
+        item.classList.remove(style);
+        return false;
+    }
+    return null;
+}
+function scroller() {
+    const items = document.querySelectorAll('.scroller');
+
+    if (items.length === 0) return;
+
+    let previousScrollY = window.scrollY; // Almacena el valor de scroll anterior
+
+    const handleScroll = () => {
+        let currentScrollY = window.scrollY;
+        let scrollingDirection = currentScrollY > previousScrollY ? 'DOWN' : 'UP';
+        let scrolled = true;
+
+        items.forEach(layer => {
+            let item = layer as HTMLElement;
+            if (item instanceof HTMLElement)
+            {
+                const style = item.dataset.scrolled || 'active';
+                const offset = parseInt(item.dataset.scroll || '0');
+                const result = scrollToggler(item, offset, style, scrolled, scrollingDirection);
+
+                if (item.dataset.call) 
+                {
+                    if (window[item.dataset.call])
+                        window[item.dataset.call](result);
+                    else
+                        item.setAttribute('data-callback', result.toString());
+                }
+            }
+        });
+
+        previousScrollY = currentScrollY; // Actualiza el valor de scroll anterior
+    };
+
+    // Remueve listeners existentes antes de añadir uno nuevo
+    window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);
+}
+
+/*
+** Init All!
+*/
+document.addEventListener('resize', function () {
+    scroller(); progress();
+});
+document.addEventListener('DOMContentLoaded', function () {
+    scroller(); progress();
+});
+document.addEventListener("astro:page-load", () => {
+    scroller(); progress();
+});
+
+</script>

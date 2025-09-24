@@ -1,0 +1,153 @@
+---
+layout: ../../layouts/Blog.astro
+author: Alberto Gómez
+name: Web Almanac 2024 CMS
+term: terms of article 8
+desc: Repaso de los datos sobre CMS del informe anual Web Almanac para el año 2024
+snap: /noticias/almanac-2024-cms.jpg
+date: 1/03/2025
+tags: ["cms", "almanac", "2024"]
+---
+
+import IntroNoticia from "@components/IntroNoticia.astro";
+import Image from "@components/Image.astro";
+
+<IntroNoticia frontmatter={frontmatter} />
+
+Web Almanac de HTTP Archive es un informe anual exhaustivo sobre el estado de la web, respaldado por datos reales 
+y expertos web de confianza. La edición de 2024 consta de 19 capítulos que abarcan aspectos del contenido de la web, 
+la experiencia del usuario, la publicación y la distribución.
+
+<p class="text-center">
+    <a href="https://almanac.httparchive.org/es/2024/" target="_blank" title="Web Almanac de HTTP Archive, informe 2024" class="btn btn-primary"> Web Almanac </a>
+</p>
+
+En este artículo nos centraremos en los gestores de contenido CMS, su relevancia y rendimiento, así como un pequeño enfoque
+en Wordpress como principal herramienta de este apartado.
+
+<h2>Sistema de Gestión de Contenidos o CMS</h2>
+
+Un Sistema de Gestión de Contenidos (CMS) es una herramienta que permite a individuos y organizaciones crear, 
+gestionar y publicar contenido digital, es decir, crear páginas web. Se descartan en este apartado herramientas de 
+comercio electrónico como Prestashop o Shopify. El uso de CMS, de forma global, en Internet es del 50% aproximadamente 
+y en ligero ascenso.
+
+Los CMS varían significativamente en su enfoque para la creación de sitios. Algunos ofrecen plantillas predefinidas 
+y constructores de bloques de arrastrar y soltar, mientras que otros requieren que los usuarios generen los diseños 
+y las estructuras del sitio. 
+
+Existen CMS de código abierto, como WordPress, Joomla y Drupal, mientras que otros son de propiedad exclusiva (privativos), 
+como Wix y Squarespace. Lo que significa que, contratando tu propio servidor, puedes instalar una copia de Wordpress y gestionar 
+casi todos los aspectos de la aplicación. Mientras que Wix, es SaaS (Software-as-a-Service), lo que simplifica notablemente la puesta
+en marcha de la web.
+
+<h2>CMS más utilizados</h2>
+
+En el ranking de los CMS más utilizados podemos comprobar que no hay grandes cambios en los últimos tres años.
+Wordpress sigue en cabeza con ritmo ascendente, seguido de Wix y Squarespace mientras que Joomla y Drupal van perdiendo
+cuota paulatinamente.
+
+<p class="img-blog">
+    <Image src="/noticias/top-5-cms-almanac-2024.png" alt="Wordpress encabeza el ranking de CMS más utilizados" class="img-fluid"/>
+</p>
+
+<h2>Core Web Vitals por CMS</h2>
+
+Como hemos mencionado, el posicionamiento SEO en la actualidad, está íntimamente relacionado con el rendimiento de la página
+web, y este, con la tecnología utilizada para crearla. Por lo tanto, ver el ranking de rendimiento en los CWV de los CMS más utilizados
+puede ser un aspecto a valorar a la hora de crear nuestra web.
+
+<p class="img-blog">
+    <Image src="/noticias/mobile-cwv-performance-cms-almanac-2024.png" alt="Comparativa de rendimientos de los CMS" class="img-fluid"/>
+</p>
+
+Vemos que todos los CMS han mejorado su puntuación con respecto a anteriores ediciones lo que es un buen dato. Sin embargo,
+que una herramienta no tenga el mejor ranking de base no implica que el resultado pueda ser peor que otro sistema que 
+se haya trabajado mejor.
+
+<h2>Lighthouse según CMS</h2>
+
+Lighthouse es una herramienta automatizada de código abierto diseñada para mejorar la calidad de las páginas web
+ofreciendo un conjunto de auditorías que evalúan sitios web basándose en 4 categorías:
+
+<ul>
+<li>Rendimiento</li>
+<li>Accesibilidad</li>
+<li>SEO (Optimización para motores de búsqueda)</li>
+<li>Mejores Prácticas</li>
+</ul>
+
+Los informes obtenidos se realizan en condiciones estandarizadas y ofrecen a los desarrolladores 
+sugerencias prácticas para mejorar el rendimiento del sitio web.
+
+El HTTP Archive ejecuta Lighthouse en páginas web tanto para dispositivos móviles como de escritorio, 
+simulando una conexión 4G lenta con rendimiento de CPU limitado para móviles. Como es lógico, los datos
+para dispositivos de escritorio serán superiores que para dispositivos móviles, sin embargo, recordemos que Google
+tiene en cuenta en su indexación sólo los datos de móviles.
+
+<p class="img-blog">
+<Image src="/noticias/median-lighthouse-performance-almanac-2024.png" alt="Comparativa de lighthouse de los CMS" class="img-fluid"/>
+</p>
+
+En comparación con los resultados de 2022, se observan mejoras impresionantes tanto para sitios web móviles 
+como de escritorio en 2024. La tendencia positiva general se debe a mejoras nativas y tecnológicas en navegadores
+y CMS, poniendo de relieve la importancia de un alto rendimiento web. 
+
+El gran aumento mostrado por plataformas propietarias como Wix está parcialmente relacionado con el modo en que operan los 
+CMS. Estas plataformas que trabajan como SaaS (Software as a Service) se benefician de un desarrollo optimizado y centralizado 
+que permite una mayor velocidad para la innovación y adopción de tendencias en el campo del rendimiento.
+
+Por otro lado, herramientas como Wordpress, requieren que el propietario de la web realice o supervise las mejoras en este
+campo para adaptarse, lo cual requiere tiempo y conocimientos técnicos. En mi anterior trabajo, nos centrábamos mucho en este
+aspecto y todas las webs realizadas con Wordpress obtenían una media superior al 85% por contrato siendo lo habitual superar 
+el 90%. 
+
+<h2>Wordpress o Wix</h2>
+
+Por lo tanto, si quieres crear tu página web con un CMS, Wix y Wordpress son las dos mejores opciones a valorar 
+con respecto al rendimiento y el posicionamiento según los datos extraídos del informe. Elegir una u otra, depende de 
+los requisitos del proyecto y ambas son buenas opciones con sus ventajas y salvedades. 
+
+Te recomiendo Wordpress si quieres disponer de mayor flexibilidad a la hora de utilizar plugins, 
+controlar el servidor, hacer backups o ahorrar costes en infraestructura ya que suele ser más barato. Sin embargo, la puesta
+en marcha y las actualizaciones requieren conocimientos técnicos o invertir un mayor tiempo.
+
+Wix es una alternativa que te permite obviar prácticamente toda la infraestructura, dada su naturaleza, y solo te centras en 
+la publicación de información. Es una solución menos flexible y escalable pero optimizada y enfocada a la visualización del
+contenido.
+
+Como nota, herramientas como Hugo o Astro, que son frameworks para crear sitios web estáticos, son tratados en otra
+<a href="https://almanac.httparchive.org/en/2024/jamstack" title="Sección Jamstack en Almanac 2024" target="_blank" rel="noopener noreferer">sección específica denominada jamstack</a> ya que no son gestores de contenido.
+
+
+<h2>Wordpress en 2024</h2>
+
+De los más de 16 millones de sitios móviles rastreados este año, WordPress es utilizado por 5.7 millones de sitios,
+lo que representa un total del 36% del total de sitios. En comparación, el CMS más cercano es Wix, con 456,253 sitios 
+o el 3% de los sitios.
+
+El dominio global de WordPress se debe a dos factores principales: una comunidad que mantiene y mejora la funcionalidad 
+del proyecto de código abierto, y la flexibilidad del CMS para servir a una amplia gama de sitios web y usuarios.
+
+Además, la disponibilidad de decenas de miles de plugins, temas y constructores de páginas permite a usuarios de todo 
+tipo de conocimientos técnicos elegir WordPress como su opción de CMS preferida. Sin embargo, estas formas fáciles de 
+expandir la funcionalidad pueden ser un arma de doble filo, especialmente en lo que respecta al rendimiento.
+
+En la siguiente sección, revisaremos la adopción de los constructores de páginas de Wordpress porque el uso de cada uno de 
+ellos facilita la maquetación de contenidos o plantillas, que de base, es casi inexistente en la instalación. 
+
+Es decir, al instalar Wordpress te permite crear páginas, entradas, categorías y utilizar el CMS de forma completa 
+pero en aspectos como la maquetación de contenidos o la modificación de plantillas es limitado. 
+Los constructores de páginas de Wordpress son plugins o temas que 
+solventan esta limitación y a día de hoy son inherentes a tener una web con este gestor de contenidos.
+
+<p class="img-blog">
+    <Image src="/noticias/top-5-page-builders-wp-almanac-2024.png" alt="Top 5 constructores de páginas de Wordpress: Elementor, wpBakery, Divi, Siteorigin, Oxygen" class="img-fluid"/>
+</p>
+
+Los usuarios de WordPress a menudo utilizan un "constructor de páginas" (page builder) que proporciona una interfaz 
+dentro del CMS para la gestión de contenido. Descubrimos que Elementor y WPBakery siguen siendo los claros ganadores.
+
+Los constructores de páginas pueden influir significativamente en el rendimiento de un sitio y por ello en MasWeb utilizamos
+Oxygen, que aunque en cuota de uso es casi anecdótico, en rendimiento nos proporcionaba unos resultados mejores que con 
+otras soluciones.

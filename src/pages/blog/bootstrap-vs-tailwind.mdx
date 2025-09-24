@@ -1,0 +1,148 @@
+---
+layout: ../../layouts/Blog.astro
+author: Alberto Gómez
+name: Bootstrap vs Tailwind
+term: Bootstrap vs Tailwind
+desc: El uso de un framework de CSS para la maquetación web es una dinámica esencial que ahorra tiempo al desarrollo
+snap: /noticias/bootstrap-vs-tailwind.jpg
+date: 1/06/2025
+tags: ["css", "web", "bootstrap", "tailwind"]
+---
+
+import IntroNoticia from "@components/IntroNoticia.astro";
+import Image from "@components/Image.astro";
+
+<IntroNoticia frontmatter={frontmatter} />
+
+A la hora de crear una página web o aplicación el uso de un freamework de CSS para crear la maquetación y tener una base 
+común al equipo de desarrollo se hace esencial. Dos de los frameworks más utilizados en la actualidad son 
+Bootstrap y Tailwind CSS, veamos diferencias, similitudes y resumen de ambas opciones.
+
+<h2>Bootstrap</h2>
+
+Bootstrap es un framework de diseño web de código abierto ampliamente utilizado, que facilita la creación de páginas web responsivas 
+y adaptables a diferentes dispositivos con filosofía mobile first.
+
+Proporciona una serie de componentes predefinidos (botones, menús, cards, etc.) y que pueden ser utilizados fácilmente, lo que
+ agiliza el proceso de desarrollo web.
+
+Este framework combina una hoja de estilos o CSS junto con funcionalidad javascript para varios de los componentes, 
+por ejemplo, carruseles, modales y menús. Además se complementa con una fuente de iconos que pueden ser utilizados en 
+casi cualquier proyecto.
+
+<p class="text-center">
+    <a href="https://getbootstrap.com/" target="_blank" title="Documentación de Bootstrap" class="btn btn-primary"> Bootstrap </a>
+</p>
+
+<h2>Tailwind CSS</h2>
+
+Tailwind CSS es un framework CSS de bajo nivel que facilita la creación de diseños personalizados para sitios web. Tailwind 
+no proporciona componentes predefinidos, sino que ofrece clases para maquetar elementos HTML de forma rápida y consistente.
+
+Este framework no utiliza javascript final, se centra solo en las hojas de estilo y en optimizar el peso de estas,
+ por lo que si una clase no es utilizada en el proyecto no será cargada en las hojas de estilo.
+
+Por así decirlo, es una abstracción de las hojas de estilo, creando clases simples y sencillas que evitan la creación 
+de líneas CSS muy comunes.
+
+<p class="text-center">
+    <a href="https://tailwindcss.com/" target="_blank" title="Documentación de tailwindcss" class="btn btn-primary"> Tailwind </a>
+</p>
+
+
+<h2>Comparación rápida</h2>
+
+Ambos cubren la tarea de maquetación de forma similar con sintaxis en algunos casos muy parecida y con filosofías similares. Sin embargo y a pesar de que son similares, sigo optando por bootstrap porque en la mayoría de los casos me da mayor flexibilidad, componentes y un enfoque más completo.
+
+Si hablamos sobre rendimiento Tailwind es la opción a escoger, sin duda. Es más, la gran mayoría de creadores de contenido sobre desarrollo web lo utilizan y está en auge. Lo que ocurre es que para desarrollos rápidos está genial, pero su uso es poco flexible salvo que tu aplicación se base en componente reutilizables y reactivos. Si deseas crear todo un portal web bootstrap sirve de forma global mucho mejor que Tailwind con una estética ya creada.
+
+Me explico, para poner un botón estilado en BS pones dos clases “btn btn-primary”, si quieres cambiar la visualización vas al SCSS y configuras el BS estándar con las variables o fuerzas sobreescribiendo la clase btn o btn primary en CSS. Más ágil pero menos optimizado y si tocas variables del SCSS tienes que conocer el sitema, sin embargo, de base tienes un botón con color primary.
+
+Con Tailwind la opción es definir el botón con los helpers (clases CSS) y su sintaxis “bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded”, un maravilloso compendio de clases. Vale, hay opciones para no hacer Ctrl C + Ctrl V cada vez que quieras el mismo botón para tener la misma visualización en toda la web: poner la clase “btn btn-primary” y definirlo en CSS sin sobreescribir nada, o si utilizas Astro o React crear un componente reutilizable que tenga el código o mezclar ambas opciones.
+
+Si además, metemos en la comparativa comportamientos que requieren javascript como carruseles o modales, menús offcanvas, o componentes similares veremos que tailwind no incluye nada pero bootstrap si. Esto quiere decir, que necesitas crear estos comportamientos o componentes mediante código de cero o conocer librerías que cubran los requisitos.
+
+
+<h3>Ejemplos prácticos</h3>
+
+Veamos la maquetación de esta web con una columna izquierda con un 
+< Sidebar > y a la derecha el contenido. En Bootstrap 5 utilizando componentes de Astro sería así:
+
+```HTML
+<div class="conainer-fluid">
+    <div class="row g-0">
+        <div class="col-12 col-md-4 col-lg-3 vh-md-100 bg-primary">
+            <Sidebar/>
+        </div>
+        <div class="col-12 col-md-8 col-lg-9">
+            <main id="main" class={className}>
+                <slot />
+                {(frontmatter && frontmatter.name) &&
+                    <p class="text-center py-3">
+                        <a href="/blog" title="Listado de artículos"  class="btn btn-primary" >
+                            Artículos
+                        </a>
+                    </p>
+                }
+            </main>
+        </div>
+    </div>
+</div>
+```
+
+La equivalencia en Tailwind sería la siguiente:
+
+```HTML
+<div class="w-full">
+    <div class="flex flex-wrap">
+        <div class="w-full md:w-4/12 lg:w-3/12 md:h-dvh bg-blue-500">
+            <Sidebar/>
+        </div>
+        <div class="w-full md:w-8/12 lg:w-9/12">
+            <main id="main" class={className}>
+                <slot />
+                {(frontmatter && frontmatter.name) &&
+                    <p class="text-center py-3">
+                        <a href="/blog" title="Listado de artículos" 
+                        class="text-blue-600 hover:text-blue-800 bg-blue-500 hover:bg-blue-600 
+                        text-white font-bold py-2 px-4 rounded">
+                            Artículos
+                        </a>
+                    </p>
+                }
+            </main>
+        </div>
+    </div>
+</div>
+```
+
+A simple vista podemos comprobar que la sintaxis es similar y si ya estás acostumbrado a trabajar con CSS el nombre de las
+clases utilizados por ambas herramientas ayudan a leer el código.
+
+En bootstrap los breakpoints para los distintos anchos de pantalla van implicitos en el nombre de la clase como col-md-4, en
+tailwind es un modificador previo al estilo como md:w-4/12
+
+Como las clases de bootstrap no son utilitarias, la definición de estilos del botón no son más de dos clases. En cambio, se complica 
+la definición en tailwind añadiendo todos y cada uno de los comportamientos que queremos.
+
+La clave para replicar el sistema de cuadrícula de Bootstrap en Tailwind es usar las utilidades de Flexbox combinadas con sus breakpoints responsivos.
+
+Breakpoints de Bootstrap (por defecto):
+
+- sm: ≥ 576px
+- md: ≥ 768px
+- lg: ≥ 992px
+- xl: ≥ 1200px
+- xxl: ≥ 1400px
+
+Breakpoints de Tailwind (por defecto):
+
+- sm: ≥ 640px
+- md: ≥ 768px
+- lg: ≥ 1024px
+- xl: ≥ 1280px
+- 2xl: ≥ 1536px
+
+Si necesitas breakpoints diferentes a los predeterminados se puede personalizar el archivo tailwind.config.js 
+junto con otras variables. En Bootstrap esta personalización se puede realizar en el 
+archivo bootstrap.scss cambiando las variables de variables.scss antes de compilar.

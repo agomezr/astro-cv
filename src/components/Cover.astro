@@ -1,0 +1,28 @@
+---
+import Image from '@components/Image.astro';
+import { slugify } from '@components/Tag.astro';
+
+const { src, attach = 'fixed', size = 'cover', repeat = 'no-repeat', position = 'center', class: className ='overflow-hidden', view = true } = Astro.props;
+
+const uid = 'cover-' + Math.random().toString(16).slice(-5);
+
+let slug = null;
+if (view) slug = slugify(src);
+---
+<div class={className} transition:name={slug}>
+	<slot/>
+	<Image class="cover-image" src={src} style="display: none;"/>
+	<script define:vars={{ uid, size, attach, repeat, position }}>
+		const coverLoader = function() {
+			Array.from(document.getElementsByClassName('cover-image')).forEach( image => {
+				image.parentNode.style.backgroundAttachment = attach; // scroll
+				image.parentNode.style.backgroundSize = size; // 100%
+				image.parentNode.style.backgroundRepeat = repeat; // repeat-y
+				image.parentNode.style.backgroundPosition = position; // top right
+				image.parentNode.style.backgroundImage = 'url('+image.getAttribute('src')+')';
+			});
+		}
+		document.addEventListener("astro:page-load", coverLoader());
+		document.addEventListener('DOMContentLoaded', coverLoader());
+	</script>
+</div>

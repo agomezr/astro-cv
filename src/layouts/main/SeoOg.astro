@@ -1,0 +1,31 @@
+---
+import conf from '@conf';
+
+import { getImage } from 'astro:assets';
+
+//Valores estáticos de 16:9
+const imageWidth = 800;
+const imageHeight = 450;
+
+const { 
+  type = "website", 
+  url = conf.site, 
+  title = conf.name+' - '+conf.term, 
+  description = conf.desc, 
+  snap = conf.image, 
+  alt = conf.term
+} = Astro.props;
+
+// ### Necesitamos la url completa y públida de la imagen y la pasamos valores de 16:9
+// const ogImage = await getImage({src: snap, width: imageWidth, height: imageHeight });
+// <meta property="og:image" content={ogImage.src} />
+// <meta property="og:image:alt" content={alt} />
+// <meta property="og:image:width" content={imageWidth.toString()} />
+// <meta property="og:image:height" content={imageHeight.toString()} />
+---
+<meta property="og:type" content={type} />
+<meta property="og:url" content={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+
+

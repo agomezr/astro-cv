@@ -1,0 +1,68 @@
+---
+import Image, { source } from './Image.astro'; 
+let { 
+    path = '/src/assets', 
+    type = '', 
+    limit = '0', 
+    class: className = 'g-grid' /* g-grid|g-row|g-col|g-mix */, 
+    style = 'img-fluid', 
+    width = '', 
+    height = '', 
+    random = false
+} = Astro.props;
+
+limit = Number(limit);
+
+let images: any[] = [];
+
+if (Astro.slots.has('default'))
+{
+    const html = await Astro.slots.render('default');
+    images = html.toString().trim().replace(/\s+/g, '\n').split("\n");
+    images.map((slot: string, i: number) => { images[i] = (path+'/'+slot).replace(/\/\//g, '/'); });
+}
+else
+{
+    const fso = import.meta.glob('/src/assets/**/*.(png|jpg|svg|webp)', { eager: true,  query: '?url' });
+
+    const all = Object.values(fso).map((image: any) => image.default);
+
+    all.map((image: any) => {
+
+        if (path == '*' || typeof image === 'object' || (typeof image === 'string' && (image.includes(path, 0) && image.includes('.'+type, (-1*(type.length+1))))))
+        {
+            images.push(image);
+        }
+    });
+}
+
+if (random) images = images.sort(() => 0.5 - Math.random());
+if (limit)  images = images.slice(0, limit);
+---
+<div class={className}>
+    {
+        images.map((image) => 
+            <Image class={style} src={image} width={width} height={height}/>
+        )
+    }
+</div>
+<style define:vars={{}}>
+.g-grid {
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(10vw, 1fr));
+    grid-auto-rows: max-content;
+    grid-auto-flow: dense;
+}
+.g-col {
+	grid-column: span 2;
+}
+
+.g-row {
+	grid-row: span 2;
+}
+.g-mix {
+	grid-row: span 2;
+	grid-column: span 2;
+}
+</style>

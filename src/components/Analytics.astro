@@ -1,0 +1,59 @@
+---
+const { ua } = Astro.props;
+/* 
+  Google Analytics Tracker -- event:category=label (event - clicky)
+  <a data-ga-event="click:visita=[twitter|facebook|instagram|linkedin|youtube|google]" />
+  <a data-ga-event="click:comparte=[twitter|facebook|instagram|linkedin|youtube|google]" />
+  <a data-ga-event="click:contacto=[telefono|mail|email|whatsapp]" /> //email para submit form
+  <video src="#" data-ga-event="click:video=Oportunidades" />
+  <form action="#" data-ga-event="submit:contacto=Demo Online" />
+*/
+---
+<script async is:inline src={'https://www.googletagmanager.com/gtag/js?id='+ua} type="text/plain" data-cookiecategory="analytics"/>
+<script defer is:inline define:vars={{ ua }} type="text/plain" data-cookiecategory="analytics">
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+
+  gtag('js', new Date()); gtag('config', ua); // UA-CODE
+
+  document.querySelectorAll('[data-ga-event],[data-ga-social]').forEach(item => {
+    // INI
+    if (item.hasAttribute("data-ga-event"))
+    {
+      var tags = item.getAttribute("data-ga-event").split(new RegExp([':', '='].join('|'), 'g'));
+    }
+    if (item.hasAttribute("data-ga-social"))
+    {
+      var tags = item.getAttribute("data-ga-social").split(new RegExp([':', '='].join('|'), 'g'));
+    }
+    if (tags.length < 2) return false;
+
+    var e = tags[0]; // html event
+
+    item.addEventListener(e, function(){
+
+      if (item.hasAttribute("data-ga-event"))
+      {
+          var data = item.getAttribute("data-ga-event").split(new RegExp([':', '='].join('|'), 'g'));
+      }
+
+      if (item.hasAttribute("data-ga-social"))
+      {
+          var data = item.getAttribute("data-ga-social").split(new RegExp([':', '='].join('|'), 'g'));
+      }
+
+      var event    = 'clicky';
+      var category = data[1].trim();
+
+      if ( data[0] == 'click' )
+      {
+          event = 'clicky';
+          data.shift();
+      }
+      category = data.join(' ');
+      gtag('event', 'pulse', { 'page_title': category }); // => console.log(event+' => '+category);
+
+    }, false);
+    // FIN
+  });
+</script>

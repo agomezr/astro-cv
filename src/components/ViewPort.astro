@@ -1,0 +1,35 @@
+---
+const {
+	class: className = '',
+	style = '',
+	speed = '0.5s',
+	delay = '0',
+	outer = '0px',
+	edge = '0.5',
+} = Astro.props;
+const id = 'view-'+Math.random().toString(16).slice(-5);
+const html = await Astro.slots.render('default');
+const params = { rootMargin: outer+' 0px '+outer+' 0px', threshold: edge };
+const timer = Number(delay);
+---
+<div id={id} class={className} style={style}>
+	<!--@slot/-->
+</div>
+<script define:vars={{ id, html, speed, timer, params }}>
+  const component = document.getElementById(id);
+	component.style.opacity = 0;
+	component.style.transition ='opacity '+speed+' ease-in-out';
+	const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+				setTimeout(() => {
+					component.innerHTML = html; // @slot
+					component.style.opacity = 1;
+          observer.unobserve(component);
+        }, timer);
+      }
+    });
+  },
+	params);
+  observer.observe(component);
+</script>

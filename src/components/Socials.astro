@@ -1,0 +1,44 @@
+---
+import conf from "@conf"
+---
+<div class="socials"></div>
+	<div class="hstack px-lg-4 px-3 gap-2 justify-content-center mb-3">
+      {conf.social['linkedin'] && (
+      <a
+        href={conf.social['linkedin']} class="btn btn-primary" data-ga-event="click:visita=linkedin"
+        title={`Perfil de ${conf.entity} en linkedin`} target="_blank" rel="noopener noreferer"
+      >
+        <i class="bi bi-linkedin" aria-hidden="true"></i>
+        <span class="visually-hidden">Perfil de {conf.entity} en linkedin</span>
+      </a>
+      )}
+	  {conf.social['github'] && (
+      <a
+        href={conf.social['github']} class="btn btn-primary" data-ga-event="click:visita=github"
+        title={`Perfil de ${conf.entity} en GitHub`} target="_blank" rel="noopener noreferer"
+      >
+        <i class="bi bi-github" aria-hidden="true"></i>
+        <span class="visually-hidden">Perfil de {conf.entity} en GitHub</span>
+      </a>
+      )}
+      {conf.email && (
+      <a
+        href={`mailto:${conf.email}`} class="btn btn-primary" data-ga-event="click:contacto=email"
+        title={`Escribir email a ${conf.entity}`} target="_blank" rel="noopener noreferer"
+      >
+        <i class="bi bi-envelope-at" aria-hidden="true"></i>
+        <span class="visually-hidden">Escribir email a {conf.entity}</span>
+      </a>
+      )}
+	  {conf.whatsapp && (
+		<a 
+			href={'https://wa.me/'+conf.chat+'?text='+conf.term} class="btn btn-success" data-ga-event="click:contacto=whatsapp"  
+      title={conf.term} target="_blank" rel="noopener">
+			<i class="bi bi-whatsapp" aria-hidden="true"></i>
+			<span class="visually-hidden">{conf.whatsapp}</span>
+		</a>
+	  )
+	  }
+      
+    </div>
+</div>

@@ -1,0 +1,18 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@node/*": ["node_modules/*"], 
+      "@*": ["src/*"], 
+    },
+  /* TS Permisivo: */
+  "strict": false, // Desactiva la verificación estricta de tipos
+  //"noImplicitAny": false, // Permite variables sin tipo explícito
+  //"skipLibCheck": true, // Omite chequeos en las bibliotecas
+  //"allowJs": true, // Permite usar archivos .js junto con .ts
+  //"checkJs": false // No realiza chequeos de tipos en archivos .js
+  }
+}

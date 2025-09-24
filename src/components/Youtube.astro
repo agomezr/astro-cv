@@ -1,0 +1,148 @@
+---
+const { 
+    video = 'MTUglvWfGsc', 
+    class: className = '', // class="ratio ratio-16x9" -- fail!
+    play = true, 
+    muted = false, 
+    loop = false, 
+    control = false, 
+    style = 'video', 
+} = Astro.props;
+---
+<div class={'youtube '+className}>
+    <div id={'you-'+video} class={'video you-video '+style} data-ga-event={'play:video=youtube-'+video} data-video={video} data-play={play} data-loop={loop} data-muted={muted} data-control={control}>
+        <div class="d-block text-center ">
+            <div class="alert alert-dark display">
+                <strong class="lead text-danger">Youtube Vídeo</strong>
+                <div class="d-block m-5">
+                    <div class="loading"></div>
+                </div>
+                <div class="alert alert-black title mb-0">
+                    <strong class="text-danger">Aviso Importante</strong>:
+                    <small>debes aceptar el <a href="#cookies" class="link cc-link" data-cc="c-settings"><strong>Uso de Cookies</strong></a> de "<strong>marketing</strong>" para reproducir vídeos.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- type="text/plain" data-cookiecategory="marketing" /-->
+<style>
+.youtube {
+    min-width: 360px; height: auto;
+}
+</style>
+<script>
+    /*
+    ** Youtube API Video Player (player)
+    ** https://developers.google.com/youtube/player_parameters
+    */
+    var youtube: any = false;
+
+    const getScript = (url: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+
+            script.addEventListener('load', () => {
+            resolve();
+            script.removeEventListener('load', () => {}); // Clean up listener
+            });
+
+            script.addEventListener('error', reject);
+
+            document.head.appendChild(script);
+        });
+    };
+    interface YT {
+    Player: any; // You can define a more specific type for YT.Player if you know its structure
+    PlayerState: any; // You can define specific types for player states
+    // Add other properties and methods of YT that you use
+    }
+    interface Window {
+    YT?: YT; // The '?' makes it optional, as it might not exist immediately
+    onYouTubeIframeAPIReady?: () => void; // Declare the global callback function
+    }
+
+    function loadYoutubeAPI() {
+        // Load Youtube Script
+        if (!youtube)
+        {
+            youtube = [];
+
+            getScript('//www.youtube.com/iframe_api').then(() => {
+                console.log('API youtube load OK!');
+                onYouTubeIframeAPIReady();
+            }).catch(() => {
+                console.log('API youtube load KO!');
+            })
+        }
+    };
+
+    function youtubeAPIReady(items, observer) {
+        items.forEach(item => {
+            if ( item.isIntersecting ){
+                youtube.push(youVideoPlayer(item));
+            }
+        });
+    };
+
+    function onYouTubeIframeAPIReady() {
+        // Youtube API Function
+        document.querySelectorAll('.you-video').forEach( element => {
+            let observerReach = new IntersectionObserver(youtubeAPIReady, { rootMargin: '-200px',  threshold: 0 });
+            observerReach.observe(element);
+        });
+    };
+
+    function youVideoPlayer(video) {
+        var player;
+        // Init Youtube Video Player
+        video = video.target;
+        if (typeof video !== 'object')
+        {
+            return console.log('YT is not an object!');
+        }
+
+        var el = document.querySelector('#'+video.getAttribute('id'));
+
+        el.closest('.youtube').classList.add('ready'); // active class!
+
+        var play: any = 0;
+
+        if (video.getAttribute('data-play'))
+        {
+            play = video.getAttribute('data-play');
+        }
+        console.log('play: ' + play);
+
+        (window as any).YT.ready(function() {
+            player = new (window as any).YT.Player(video.getAttribute('id'), {
+                videoId: video.getAttribute('data-video'),
+                height:  video.getAttribute('data-height') || '100%',
+                width:   video.getAttribute('data-width') || '100%',
+                playerVars: {
+                    enablejsapi: 0,
+                    // [origin], start, end, loop (!support), etc
+                    fs: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    autoplay: play,
+                    controls: Boolean(video.getAttribute('data-control'))? 2: 0,
+                    modestbranding: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: function(){
+                        if (video.getAttribute('data-muted')) { player.mute(); }
+                    }
+                }
+            });
+        });
+        return player;
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        loadYoutubeAPI();
+    });
+</script>

@@ -1,0 +1,65 @@
+---
+import Blog from "@layouts/Blog.astro";
+import Pagination from "@components/Pagination.astro";
+import conf from "@conf";
+import Card from "@components/Card.astro";
+import { getPostsTagged } from "../[tag].astro";
+
+
+//https://docs.astro.build/es/guides/routing/#paginaci%C3%B3n-anidada
+export async function getStaticPaths({ paginate }) {
+  const posts = getPostsTagged();
+  const tags = [...new Set(posts.map((post: any) => post.data.tags).flat())];
+
+  return tags.flatMap((tag) => {
+    const postsTagged = posts.filter((post) => post.data.tags.includes(tag));
+    // const filteredPosts = allPytos.filter(({data}) => data.tags.includes(tag));
+    return paginate(postsTagged, { params: { tag }, pageSize: conf.paginate });
+  });
+}
+
+const { tag } = Astro.params;
+const { page } = Astro.props as any;
+---
+<Blog name="Etiquetas de proyectos" 
+  title=`Artículos con la etiqueta: ${tag}, página: ${page.currentPage}` 
+  desc=`Artículos con la etiqueta: ${tag}, página: ${page.currentPage}`>
+
+  <h1>Artículos con la etiqueta: {tag}</h1>
+  <p class="lead">
+    Noticias, artículos o ideas sobre el desarrollo de aplicaciones o páginas web y el mundo de la tecnología.
+  </p>
+
+  <div id="grid-blog" class="container">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4">
+      {
+        page.data.map((post:any) => {
+          const { data, id } = post;
+          return  <div class="col mb-3">
+            <Card 
+              name={data.name} desc={data.desc}  term={data.date} snap={data.snap} link={'/blog/'+id}
+              etag="h2" class="new" 
+              style={{
+                name: '',
+                desc: '',
+                term: '',
+                snap: 'img-fluid mb-2',
+                icon: 'bi bi-chevron-right',
+                link: 'float-end mb-0 icon-link icon-link-hover stretched-link' }}
+              />
+          </div>
+        })
+      }
+    </div>
+  </div>
+
+  <Pagination page={page}/>
+
+  <p class="text-center py-3">
+    <a href="/blog" title="Listado de artículos"  class="link btn btn-primary" >
+      Artículos
+    </a>
+  </p>
+
+</Blog>

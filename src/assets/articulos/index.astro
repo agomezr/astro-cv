@@ -1,0 +1,33 @@
+---
+import Blog from '@layouts/Blog.astro';
+import Card from '@components/Card.astro';
+export const name = 'Artículos';
+export const desc = 'Artículos sobre diseño, desarrollo y publicación de páginas y aplicaciones web';
+export const menu = 4;
+
+ const fso = await import.meta.glob('/src/pages/blog/**/*.(mdx|astro)', { eager: true });
+
+ const links = Object.entries(fso).map((data: any, i) => {
+
+	if ('frontmatter' in data[1])
+		return {...data[1]['frontmatter'], file: data[0], path: data[1]['url']}
+	else
+		return {...data[1], file: data[0], path: data[1]['url']}
+ });
+
+---
+<Blog title="Blog de noticias variadas sobre desarrollo web">
+	<h2 class="my-3">
+		Blog de noticias variopintas
+	</h2>
+	<div class="row row-cols-1 row-cols-md-3 row-cols-xl-5  g-3">
+	{
+		links.map(link => {
+			return  <div class="col">
+						<Card name={link.name} desc={link.desc} slug={link.path}  snap={link.snap} link={link.path} slug={ link.path.split("/").reverse()[0] }/>
+					</div>
+			}
+		) 
+	}
+	</div>
+</Blog>

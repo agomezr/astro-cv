@@ -1,0 +1,2042 @@
+/**
+ * Easy Ajax 
+ */
+function ajax(url, callback){
+    var xhr;
+    // compatible with IE7+, Firefox, Chrome, Opera, Safari
+    xhr = new XMLHttpRequest();
+    xhr.onload = function(){
+        if (xhr.readyState == 4 && xhr.status == 200){
+            callback(xhr.responseText);
+        }
+    }
+    xhr.open("GET", url, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.send();
+}
+
+/**
+ * Dinamyc Scripts 
+ */
+function script(src,callback){
+    return scripts([src]);
+}
+function scripts(sources,callback){
+    var loader = function(src,handler){
+        var script = document.createElement("script");
+        script.src = src;
+        script.onload = script.onload = function(){
+            script.onload = script.onload = null;
+            handler();
+        }
+        var head = document.getElementsByTagName("head")[0];
+        (head || document.body).appendChild( script );
+    };
+    (function run(){
+        if(sources.length!=0){
+            loader(sources.shift(), run);
+        }else{
+            callback && callback();
+        }
+    })();
+}
+
+window.addEventListener('load', function(event) {
+
+});
+
+document.addEventListener('DOMContentLoaded', function(event) {
+    
+});
+
+document.addEventListener('readystatechange', function(event) {
+
+});
+
+/*
+ ** @root-variables: return BootStrap breakpoints variables
+ *  [JS] => alert(media.md);   ···   [CSS] => var(--primary);
+ */
+var media = {
+    xs: getComputedStyle(document.body).getPropertyValue('--breakpoint-xs'),
+    sm: getComputedStyle(document.body).getPropertyValue('--breakpoint-sm'),
+    md: getComputedStyle(document.body).getPropertyValue('--breakpoint-md'),
+    lg: getComputedStyle(document.body).getPropertyValue('--breakpoint-lg'),
+    xl: getComputedStyle(document.body).getPropertyValue('--breakpoint-xl'),
+   xxl: getComputedStyle(document.body).getPropertyValue('--breakpoint-xxl')
+};
+
+var queries = {
+    xs: '(max-width: ' + parseInt(media.sm.replace('px', '') - 1) + 'px' + ')',
+    sm: '(min-width: ' + media.sm + ') and (max-width: ' + parseInt(media.md.replace('px', '') - 1) + 'px' + ')',
+    md: '(min-width: ' + media.md + ') and (max-width: ' + parseInt(media.lg.replace('px', '') - 1) + 'px' + ')',
+    lg: '(min-width: ' + media.lg + ') and (max-width: ' + parseInt(media.xl.replace('px', '') - 1) + 'px' + ')',
+    xl: '(min-width: ' + media.xl + ') and (max-width: ' + parseInt(media.xxl.replace('px', '') - 1) + 'px' + ')',
+   xxl: '(min-width: ' + media.xxl + ')'
+};
+
+/* media queries via JS
+ * <div class="py-5 medias" data-css="{'xs': 'text-bg-primary', 'lg': 'text-bg-secondary', 'xl': 'text-bg-light text-danger', 'xxl': 'text-bg-light'}">
+ */
+var cssMedias = function () {
+    let medias = document.querySelectorAll('.medias');
+    
+    if( medias.length === 0 ) { return false; }
+    
+    medias.forEach((media) => {
+
+        if ( !("css" in media.dataset)) { return false; } 
+
+        var css = media.dataset.css;
+        css = JSON.stringify(css.replace(/'/g, '"')).replace(/\\/g, '');
+        css = css.substring(1, css.length - 1);
+        var css = JSON.parse(css);
+        let classes;
+        for (var bp in queries)
+        {
+            if (css[bp] !== undefined && window.matchMedia(queries[bp]).matches)
+            {
+                classes = css[bp].split(' ');
+                classes.forEach( el => {
+                    media.classList.add(el);
+                });
+                return true; // Return INTERVAL Changed
+            } else if (css[bp] !== undefined)
+            {
+//                media.setAttribute('style', ''); // Hard Reset Styles
+                classes = css[bp].split(' ');
+                classes.forEach( el => {
+                    media.classList.remove(el);
+                });
+            }
+        }
+    });
+};
+
+/*
+ ** Helper: Get true if breakpoint applies
+ * if (minMedias('md')) //...
+ */
+var minMedias = function (breakpoint) {
+    if (document.body.clientWidth >= parseInt(media[breakpoint].replace('px', '')))
+        return true;
+    return false;
+};
+
+/*
+ ** Helper: Get true if breakpoint applies
+ * if (maxMedias('md')) //...
+ */
+var maxMedias = function (breakpoint) {
+    if (document.body.clientWidth < parseInt(media[breakpoint].replace('px', '')))
+        return true;
+    return false;
+};
+
+/*
+ * Make an ajax call
+ * USE:
+ * - var ajax = ajax('someurl', 'get',  function(obj) { alert(obj.responseText); })
+ */
+ var makeAjax = function(url, method, callback, params = null) {
+    var obj;
+    try {   
+        obj = new XMLHttpRequest();  
+    } catch(e){   
+        console.log("Your browser does not support Ajax.");       
+        return false;       
+    }
+    obj.onload = function() {
+        if(obj.readyState == 4 && obj.status == 200) {
+           callback(obj);
+        } 
+    }
+    obj.open(method, url, true);
+    obj.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    obj.send(params);
+    return obj; 
+ };
+
+/*
+ * Wait untill an elemet is append and exist in DOM
+ * https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists
+ * USE:
+ * - waitForElm('.some-class').then((elm) => { console.log(elm.textContent); });
+ * - const elm = await waitForElm('.some-class');
+ */
+var waitForElm = function(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                resolve(document.querySelector(selector));
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+};
+
+
+/*
+ ** Animate effects on scroll with animate.css and Intersection Observer JS API
+ * USE: https://daneden.github.io/animate.css/ (Animation catalogue) 
+ *      https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+ * <img class="img-fluid anime anime-opacity" data-anime="fadeInDown" data-loop="infinite" data-percentage="0.5" data-offset="-200px" alt="IMAGE" src="/media/image.svg" />
+ * - anime         => the element to be animated "tada" o set classnames to toggle in and toggleout "slideInDown-slideOutUp" (string or array methods)
+ * - data-anime    => animate css style or base classname to apply on animation => class="ANIME" OR class="ANIME opacty" (see ANIME in animate.css)
+ * - data-offset   => viewport visibility height in view scrolled by top and bottom => "200,100" => top: 200px & bottom: 100px or percent "0.15" => top-bottom: 15%
+ * - data-duration => time of transition effect duration: decimal "1.5" in seconds or integer "1500" in miliseconds 
+ * - data-delay    => wait transition time before start: decimal "1.5" in seconds or integer "1500" in miliseconds
+ * - data-repeat   => number of effect animations 'infinite' or integer (0-X) number of effect iterations -- destroy intersection object observer
+ * - data-loop     => number of scroll iterations (-1 is infinite) and (loop = 1 is inside, 2 is inside and outside, etc) -- destroy intersection object observer
+ * USE:
+ * <div class="anime opacity" data-anime="tada" data-loop="3" data-delay="3000" data-repeat="10">
+ * <div class="anime opacity" data-anime="fadeInDown-fadeOutUp" data-offset="300,150" data-delay="1.5">
+ * <div class="anime opacity" data-anime="fadeInLeft" data-delay="0.5" data-duration="3" data-offset="50" data-onset="30" data-loop="2">¡ANIMATION STYLES!</div>
+ * <div class="anime anime-beta" data-offset="50" data-onset="30">¡TOGGLE CLASSES!</div>
+ */
+const animateCSS = (node, animation, prefix = 'animate__') =>
+  
+  // We create a Promise and return it
+  new Promise((resolve, reject) => {
+    const animationName = `${prefix}${animation}`;
+    
+    node.classList.add(`${prefix}animated`, animationName);
+    
+    // When the animation ends, we clean the classes and resolve the Promise
+    function handleAnimationEnd(event) {
+      event.stopPropagation();
+      node.classList.remove(`${prefix}animated`, animationName);
+                            
+      resolve('Animation END!');
+    }
+    
+    node.addEventListener('animationend', handleAnimationEnd, {once: true});
+});
+const animeHandler = function(items, observer){
+    
+    items.forEach(item => { item.target.querySelectorAll('.anime').forEach(el => {
+        
+        var opacity = false; // infinite
+        
+        if ("opacity" in el.dataset)
+        {
+            opacity = Boolean(el.dataset.opacity);
+        }
+        
+        var anime = 'tada';
+        
+        if ("anime" in el.dataset)
+        {
+            anime = el.dataset.anime.toString().split('-');
+            
+            if (anime.length !== 2)
+            {
+                anime = el.dataset.anime;
+            }
+        }
+        
+        var loop = -1; // infinite
+        
+        if (("loop" in el.dataset))
+        {
+            loop = parseInt(el.dataset.loop);
+        }
+        else
+        {
+            if (typeof anime == 'string')
+                loop = 1;
+            else
+                loop = -1;
+        }
+        
+        var status = "";
+        var change = false;
+        
+        let rootTop = item.rootBounds.top;
+        let rootBottom = item.rootBounds.height;
+        let topBound = item.boundingClientRect.top; // -50 to fix rootMargin
+        let bottomBound = item.boundingClientRect.bottom;
+        
+        if (topBound >= rootTop)
+        {
+            if (item.isIntersecting)
+                status = "topIn";
+            else
+                status = "topOut";
+        }
+        else if (rootBottom > bottomBound)
+        {
+            if (item.isIntersecting)
+                status = "bottomIn";
+            else
+                status = "bottomOut";
+        }
+        
+        var run = { topIn: 1, bottomOut: 1, bottomIn: 1, topOut: 1 };
+        
+        if ("run" in el.dataset)
+        {
+            let data = el.dataset.run;
+
+            if (data.includes(','))
+            {
+                data = el.dataset.run.toString().split(',');
+                
+                if (data.length == 4)
+                {
+                    run.topIn = parseInt(data[0]);
+                    run.bottomOut = parseInt(data[1]);
+                    run.bottomIn = parseInt(data[2]);
+                    run.topOut = parseInt(data[3]);
+                }
+            }
+        }
+        else
+        {
+            if (typeof anime == 'string')
+            {
+                run = { topIn: 1, bottomOut: 0, bottomIn: 1, topOut: 0 };
+            }
+        }
+        
+        if ("repeat" in el.dataset) // Repeat Animation Use OF Case
+        {
+            let animes = '';
+            
+            if (el.dataset.repeat === 'infinite' || el.dataset.repeat == '-1')
+                animes = 'animate__infinite';
+            else 
+                animes = 'animate__repeat-'+el.dataset.repeat;
+            
+            if (opacity) el.classList.remove('opacity');
+            
+            el.classList.add('animate__animated');
+            el.classList.add('animate__'+anime.toString());
+            el.classList.add(animes);
+            
+            return;
+        }
+        
+        //#document.getElementById('navbar').innerHTML = '<code style="color:#'+Math.floor(Math.random()*16777215).toString(16)+';">'+status+' ('+loop+') !</code>';
+        
+        if (!run[status])
+        {
+            return; // no intersect!
+        }
+        
+        if (el.dataset.status == undefined)
+        {
+            if (status == 'topOut') // INIT UP
+            {
+                el.dataset.status = status;
+
+                return;
+            }
+            else if (status == 'bottomOut') // INIT DOWN
+            {
+                if (typeof anime == 'string')
+                {
+                    animateCSS(el, anime).then((message) => {
+                        if (opacity) el.classList.remove('opacity');
+                    });
+                }
+                else
+                {
+                    animateCSS(el, anime[0]).then((message) => {
+                        if (opacity) el.classList.remove('opacity');
+                    });
+                }
+            }
+        }
+        
+        if (loop == 0)
+        {
+            return observer.unobserve(el.parentElement); // !important undo to free memory
+        }
+        else if (loop > 0 || loop < 0)
+        {
+            if (status == 'topIn' || status == 'bottomIn')
+            {
+                if (typeof anime == 'string')
+                {
+                    animateCSS(el, anime).then((message) => {
+                        if (opacity) el.classList.remove('opacity');
+                    });
+                }
+                else
+                {
+                    animateCSS(el, anime[0]).then((message) => {
+                        if (opacity) el.classList.remove('opacity');
+                    });
+                }
+            }
+            else if (status == 'topOut' || status == 'bottomOut') // OFF
+            {
+                if (typeof anime == 'string')
+                {
+                   if (opacity) el.classList.add('opacity'); // only
+                }
+                else
+                {
+                    animateCSS(el, anime[1]).then((message) => {
+                        if (opacity) el.classList.add('opacity');
+                    });
+                }
+            }
+            
+            loop--;
+            el.dataset.loop = loop;
+        }
+        
+        el.dataset.status = status; // Scroll Header Init
+        
+    }); });
+};
+var anime = function(){
+    
+    let items = document.querySelectorAll('.anime');
+    
+    if ( items !== null) {
+        
+        items.forEach(item => {
+            
+            if ("delay" in item.dataset)
+            {
+                if (item.dataset.delay.includes('.'))
+                    item.style.animationDelay = parseFloat(item.dataset.delay)+'s';
+                else
+                    item.style.animationDelay = parseInt(item.dataset.delay)+'ms';
+            }
+            
+            if ("duration" in item.dataset)
+            {
+                if (item.dataset.duration.includes('.'))
+                    item.style.animationDuration = parseFloat(item.dataset.duration)+'s';
+                else
+                    item.style.animationDuration = parseInt(item.dataset.duration)+'ms';
+            }
+            
+            if (item.classList.contains('opacity'))
+            {
+                item.dataset.opacity = '1'; // !important (animateCSS)
+            }
+            
+            // REACH
+            
+            let options = { rootMargin: '-16%', threshold: 0.5 };
+            
+            var offset = (-1)*(item.getBoundingClientRect().height); // 0
+            
+            if (("offset" in item.dataset))
+            {
+                offset = item.dataset.offset;
+                
+                if (offset.includes(','))
+                {
+                    offset = item.dataset.offset.toString().split(',');
+                    if (offset[0].includes('.'))
+                        offset[0] = (-100)*parseFloat(offset[0])+'%';
+                    else
+                        offset[0] = (-1)*parseFloat(offset[0])+'px';
+                    
+                    if (offset[1].includes('.'))
+                        offset[1] = (-100)*parseFloat(offset[1])+'%';
+                    else
+                        offset[1] = (-1)*parseFloat(offset[1])+'px';
+                    
+                    options.rootMargin = offset[0]+' 0px '+offset[1]+' 0px';
+                }
+                else
+                {
+                    if (offset.includes('.'))
+                        offset = (-100)*parseFloat(offset)+'%';
+                    else
+                        offset = (-1)*parseInt(offset)+'px';
+                    
+                    options.rootMargin = offset;
+                }
+            }
+            
+            let observerAnime = new IntersectionObserver(animeHandler, options);
+            
+            observerAnime.observe(item.parentElement);
+        });
+        
+    }
+};
+
+/*
+ ** Intersection Observer JS API with .reach class
+ * <div class="alert reach" data-reach="active show" data-percentage="0.5" data-offset="200" data-loop="1">...
+ * <div class="reach" data-in="bg-success" data-out="bg-danger">...
+ * https://jsfiddle.net/gion_13/okrcgejt/8/
+ * - data-offset => like margin in px [-200px] implies 200px passed element
+ * - data-percent =>  height of elements % visible on viewport [ 0 | 0.1 | 0.3 | ... | 0.99 ]. 0 first pixel, 0.99 all pixels
+ * - data-in => calls a function if exist after setting or toggle a class name
+ * - data-out => calls a function if exist before setting or toggle a class name
+ * - data-loop  => number of iterations (-1) is infinite (loop = 1 is inside, 2 is inside and outside)
+ */
+var reachHandler = function(items, observer){
+    
+    items.forEach(item => {
+        
+        const classIn  = 'active';
+        const classOut = '';
+        
+        let el = item.target;
+        
+        var status = "";
+        
+        let rootTop = item.rootBounds.top;
+        let rootBottom = item.rootBounds.height;
+        let topBound = item.boundingClientRect.top; // -50 to fix rootMargin
+        let bottomBound = item.boundingClientRect.bottom;
+
+        if (topBound > rootTop)
+        {
+            if (item.isIntersecting)
+                status = "topIn";
+            else
+                status = "topOut";
+        }
+        else if (rootBottom > bottomBound)
+        {
+            if (item.isIntersecting)
+                status = "bottomIn";
+            else
+                status = "bottomOut";
+        }
+        
+        el.dataset.status = status;
+        
+        var run = {
+            topIn: 1,
+            bottomOut: 1,
+            bottomIn: 1,
+            topOut: 1
+        };
+        if ("run" in el.dataset)
+        {
+            let data = el.dataset.run;
+
+            if (data.includes(','))
+            {
+                data = el.dataset.run.toString().split(',');
+                
+                if (data.length == 4)
+                {
+                    run.topIn = parseInt(data[0]);
+                    run.bottomOut = parseInt(data[1]);
+                    run.bottomIn = parseInt(data[2]);
+                    run.topOut = parseInt(data[3]);
+                }
+            }
+        }
+        
+        if (!run[status]) return;
+        
+        var loop = -1; // infinite
+        
+        if (("loop" in el.dataset))
+        {
+            loop = parseInt(el.dataset.loop);
+        }
+        
+        if ( item.isIntersecting ) // ON
+        {
+            if (loop > 0 || loop < 0)
+            {
+                if (typeof window[el.dataset.in] === "function") 
+                {
+                    window[el.dataset.in]();  // callback
+                }
+                else // toogle classes
+                {
+                    if ("out" in el.dataset)
+                    {
+                        var classes = el.dataset.out.split(' ');
+
+                        if (typeof classes == 'string')
+                        {
+                            el.classList.remove(classOut);
+                        }
+                        else
+                        {
+                            classes.forEach( css => {
+                                el.classList.remove(css);
+                            });
+                        }
+                    }
+                    if ("in" in el.dataset)
+                    {
+                        var classes = el.dataset.in.split(' ');
+
+                        if (typeof classes == 'string')
+                        {   
+                            el.classList.add(classIn);
+                        }
+                        else
+                        {
+                            classes.forEach( css => {
+                                el.classList.add(css);
+                            }); 
+                        }
+                    }
+                }
+                
+                loop--;
+                el.datasetloop = loop;
+            }
+            else
+            {
+                return observer.unobserve(el); // undo
+            }
+        }
+        else // OFF
+        {
+            if (loop > 0 || loop < 0)
+            {
+                if (typeof window[el.dataset.in] === "function") 
+                {
+                    window[el.dataset.out]();  // callback 
+                }
+                else // toogle classes
+                {
+                    if ("in" in el.dataset)
+                    {
+                        var classes = el.dataset.in.split(' ');
+
+                        if (typeof classes == 'string')
+                        {
+                            el.classList.remove(classIn);
+                        }
+                        else
+                        {   
+                            classes.forEach( css => {
+                                el.classList.remove(css);
+                            });
+                        }
+                    }
+                    if ("out" in el.dataset)
+                    {
+                        var classes = el.dataset.out.split(' ');
+
+                        if (typeof classes == 'string')
+                        {
+                            el.classList.add(classOut);
+                        }
+                        else
+                        {
+                            classes.forEach( css => {
+                                el.classList.add(css);
+                            });    
+                        }
+                    }
+                }
+                
+                loop--;
+                el.dataset.loop = loop;
+            }
+            else
+            {
+                return observer.unobserve(el); // undo
+            }
+        }
+        
+    });
+};
+var reach = function(){
+    
+    let items = document.querySelectorAll('.reach');
+    
+    if ( items !== null) {
+        
+        items.forEach(item => {
+            
+            let options = { rootMargin: '-120px', threshold: 1 };
+            
+            // REACH
+            
+            var offset = (-1)*(item.getBoundingClientRect().height); // 0
+            
+            if (("offset" in item.dataset))
+            {
+                offset = item.dataset.offset;
+                
+                if (offset.includes(','))
+                {
+                    offset = item.dataset.offset.toString().split(',');
+                    if (offset[0].includes('.'))
+                        offset[0] = (-100)*parseFloat(offset[0])+'%';
+                    else
+                        offset[0] = (-1)*parseFloat(offset[0])+'px';
+                    
+                    if (offset[1].includes('.'))
+                        offset[1] = (-100)*parseFloat(offset[1])+'%';
+                    else
+                        offset[1] = (-1)*parseFloat(offset[1])+'px';
+                    
+                    options.rootMargin = offset[0]+' 0px '+offset[1]+' 0px';
+                }
+                else
+                {
+                    if (offset.includes('.'))
+                        offset = (-100)*parseFloat(offset)+'%';
+                    else
+                        offset = (-1)*parseInt(offset)+'px';
+                    
+                    options.rootMargin = offset;
+                }
+            }
+            
+            var percent = 1; // 0.5
+            
+            if (("percent" in item.dataset))
+            {
+                options.threshold = parseFloat(item.dataset.loop);
+            }
+            
+            
+            let observerReach = new IntersectionObserver(reachHandler, options);
+           
+            observerReach.observe(item);
+        });
+        
+    }
+};
+
+/*
+ ** Progress Bar on scroll window contents
+ * <div id="progress" class="progress">
+ *      <div class="progress-bar bg-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Barra de progreso de lectura"></div>
+ * </div>
+ */
+var progress = function () {
+
+    var getPercent = function () {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;  
+        return ((winScroll / height) * 100) + '%';
+    };
+
+    // Browser supports progress element
+//    var progress = $('#progress.progress > div, #progress.scroller[data-scrolled=progress] > div');
+    var progress = document.querySelector('#progress.progress > div, #progress.scroller[data-scrolled=progress] > div');
+    
+    if(progress == null) { return; }
+    
+    document.addEventListener('scroll', () => {
+        progress.style.width =  getPercent();
+    });
+
+    window.addEventListener('resize', () => {
+        progress.style.width =  getPercent();
+    });
+
+    if (getPercent() == '0%') { 
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" }); 
+    }
+};
+
+/*
+ ** Counter: animation that increments numbers with Intersection Observer
+ *  <span class="counter" data-count="500,5" data-step="43" data-timer="2500">500</span><sub>%</sub>
+ * - innerHTML  => number end counter
+ * - data-count => Text o Number showed at end of counter
+ * - data-step  =>  Number sum in each loop. Default 27.
+ * - data-timer =>  Time of the whole animation. Default 1500
+ */
+var counter = function () {
+    let counters = document.querySelectorAll('.counter');
+    
+    var counter_js = function(el, number, end, delay, step){
+        el.innerHTML = number.toString();
+        number = number + parseInt(end/step);
+        if ( number < end ) {
+            setTimeout(function(){
+                counter_js(el, number, end, delay, step);
+            }, delay);    
+       } else {
+           el.innerHTML = el.dataset.count;
+       }
+    };
+    
+    counters.forEach( (el) => {
+        
+        let options = { rootMargin: '0px', threshold: '0' };
+        
+        let observerReach = new IntersectionObserver((items, observer) => {
+            items.forEach(item => {
+                let timer = 1500;
+                let end = parseInt(el.innerHTML) + 1;
+                let delay;
+                let step = 27;
+                
+                if ("timer" in el.dataset){
+                    timer = el.dataset.timer;
+                } else {
+                    el.setAttribute('data-timer', timer);
+                }
+                if ("step" in el.dataset){
+                    step = el.dataset.step;
+                }
+                
+                delay = parseInt(timer/step);
+                
+                if ( item.isIntersecting ){
+                    counter_js(item.target, 1, end, delay, step);
+                    //Liberamos memoria
+                    observer.unobserve(item.target);
+                }
+            });
+        }, options);
+        observerReach.observe(el);
+        el.classList.remove('counter'); //Due to reach callback function
+        
+    });
+    
+};
+
+
+/*
+ ** Writter: animation for type writter effect on text words
+ * <p class="writter text-info" data-timer="1200">
+ *    <span class="type">TIC</span><span class="type">SEO</span><span class="type">SEM</span>
+ * </p>
+ */
+/*
+var TypeWritter = function (object, type, times) // callback effect
+{
+    this.dom = object;
+    this.word = type;
+    this.loops = 0;
+    this.timer = parseInt((times / type.length), 10) || 1000;
+    this.times = parseInt(times, 10) || 1000;
+    this.display = '';
+    this.untick = false;
+    this.tick();
+};
+TypeWritter.prototype.tick = function () {
+    var i = this.loops % this.word.length;
+    var phrase = this.word[i];
+
+    if (this.untick)
+        this.display = phrase.substring(0, this.display.length - 1);
+    else
+        this.display = phrase.substring(0, this.display.length + 1);
+
+    var delta = this.times - Math.random(10) * 100;
+
+    this.dom.textContent = this.display;
+    var that = this;
+
+    if (this.untick)
+    {
+        delta /= 3;
+    }
+
+    if (!this.untick && this.display === phrase)
+    {
+        delta = this.timer*10;
+        this.untick = true;
+    } else if (this.untick && this.display === '')
+    {
+        this.display = ' '; // fix empty
+        this.untick = false;
+        this.loops++;
+        delta = this.times / 2;
+    }
+
+    var tw = setTimeout(function () {
+        that.tick();
+    }, delta);
+};
+// Init writter effect
+var writter = function () {
+    let writters = document.querySelectorAll('.writter');
+
+    writters.forEach( (el, i) => {
+        let timer = 300;
+        let n = 0;
+        let children = el.querySelectorAll('.type');
+        let words;
+        
+        if ("timer" in el.dataset){
+            timer = el.dataset.timer;
+        } else {
+            el.setAttribute('data-timer', timer);
+        }
+        
+        el.setAttribute('words', '');
+        el.innerHTML ='<span class="writting"></span>';
+        
+        children.forEach( (it) => {
+            it.classList.add('d-none');
+            el.setAttribute('words', el.getAttribute('words') + '|' + it.innerHTML);
+        });
+        
+        words = el.getAttribute('words').split("|");
+        
+        var writting = el.querySelector('.writting');
+        el.classList.remove('writter'); //Due to reach callback function
+        
+        return new TypeWritter(writting, words, timer); // type-writter
+        
+    });
+    
+};
+*/
+
+/*
+ ** Ganchor links: on click 'ganchor' link, go to anchor with scroll animation
+ * <a class="ganchor"data-scroll="50" title="Contactar por Email" href="/#form">···</a>
+ * - data-scroll="50" el margen superior que deja al hacer el scroll como por ejemplo el header fijo
+ */
+function ganchor() {
+    let ganchors = document.querySelectorAll('.ganchor');
+    var header = document.getElementById('header');
+    
+    ganchors.forEach( (el) => {
+        el.addEventListener('click', (e) => {
+            
+            e.preventDefault();
+            
+            if (el.parentNode.getAttribute('id') === 'goto') 
+            { 
+                return window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }
+
+            var scroll = 0;
+            var offset = 0;
+            var anchor = el.getAttribute('href');
+            var ganchor = document.querySelector(anchor.replace('/', ''));
+
+            if (ganchor === null)
+            {
+                return  window.location = anchor; 
+            }
+            
+            var position = ganchor.getBoundingClientRect();
+            
+            if (el.dataset.scroll !== undefined)
+            {
+                scroll = parseInt(el.dataset.scroll);
+            }
+
+            if (header !== null)
+            {
+                if (header.classList.contains('sticky-top')) 
+                {
+                    offset = header.clientHeight + 1;
+                }
+                else if (header.classList.contains('fixed-top')) 
+                {
+                    offset = header.clientHeight + 1;
+                }
+            }
+            
+            let delay = 0;
+            
+            if (el.dataset.delay  !== undefined) // ms
+            {
+                delay = parseInt(el.dataset.delay);
+            }
+            
+            setTimeout(() => {  
+                
+                return window.scrollTo({ behavior: "smooth", top: position.top + window.scrollY - offset - scroll, left: 0 });
+            
+            }, delay);
+            
+        });
+    });
+};
+
+/*
+ ** Scroller Detection Effect: Set class to element or call a function at user window.scroll event
+ * data-scroll: 100 => Launch the event at 100px user scroll
+ * <header class="scroller sticky-top | fixed-top" data-scrolled="active" data-scroll="200">···</header>
+ * <div id="goto" class="position-fixed scroller" data-scroll="500" data-call="bienvenida">
+ * ###todo: remove event listener. Pero necesitamos que no sea una funcion anónima en el Event Listener
+ */
+var scroll = window.scrollY;
+var scrolled = true;
+var scrolling = 'DOWN';
+var scrollToggler = function (item, offset, style, change, status){
+    
+    if ( change && status == 'DOWN' && window.scrollY >= (item.offsetHeight + offset))
+    {   
+        item.classList.add(style);
+        
+        return true;
+    }
+    else if ( change && status == 'UP' && window.scrollY < (item.offsetHeight + offset))
+    {
+        item.classList.remove(style);
+        
+        return false;
+    }
+    
+    return null;
+};
+var scroller = function (e) {
+    
+    let items = document.querySelectorAll('.scroller');
+    
+    if (items.length == 0 ) { return; }
+    
+    items.forEach(item => {
+        
+        var style  = 'active';
+        var offset = 0;
+        
+        if ("scrolled" in item.dataset) style  = item.dataset.scrolled.toString();
+        
+        if ("scroll" in item.dataset)   offset = parseInt(item.dataset.scroll);
+        
+        let cb = scrollToggler(item, offset, style, scrolled, scrolling);
+
+        document.addEventListener("scroll", function(e) {
+            
+            scrolled = true;
+            
+            if ( window.scrollY >= scroll)
+            {
+                if (scrolling == '' || scrolling == 'UP') scrolled  = true;
+                
+                scrolling = 'DOWN';
+            }
+            else if (window.scrollY < scroll)
+            {                
+                if (scrolling == '' || scrolling == 'DOWN')  scrolled  = true;
+                
+                scrolling = 'UP';
+            }
+            
+            scroll = window.scrollY;
+            
+            cb = scrollToggler(item, offset, style, scrolled, scrolling);
+            
+            if ("call" in item.dataset)
+            {
+                if (item.getAttribute('data-callback'))
+                {
+                    window[item.dataset.call](cb); // callback to specific function
+                }
+                else
+                {
+                    item.setAttribute('data-callback', cb);
+                }
+            }
+        
+        }.bind(null, item, offset, style, scrolled, scrolling)); 
+    });
+};
+
+/*
+ ** Links Extension (overlay location) -- Requires CSS .link-out > .link-in
+ * <div class="card card-body link-out">
+ *   <img class="img-fluid" src="/media/portada/cubiertas.png" alt="INSIDE IMAGE LINK"/>
+ *   <a class="link-in" href="/catalogo/tejados-cubiertas/" title="INVISIBLE LINK">NO VISIBLE LINK</a>
+ * </div>
+ */
+var linkInOut = function () {
+    let outs = document.querySelectorAll('.link-out');
+    
+    outs.forEach( (out) => {
+        let ins = out.querySelector('.link-in');
+        let target = '_blank';
+        
+        if (ins == null) { return; }
+        if (ins.getAttribute('target') !== null) { target = ins.getAttribute('target'); }
+        
+        out.setAttribute('title', ins.getAttribute('title'));
+        out.setAttribute('data-link', ins.getAttribute('href'));
+        out.setAttribute('data-target', target );
+        
+        out.addEventListener('click', (el) => {
+            window.open(out.getAttribute('data-link'), target);
+        });
+        
+    });
+};
+
+
+/*
+ ** Picture Parent All AutoHeight -- blur flip swap
+ *  #FIX slots.css CSS
+ */
+var picAutoHeight = function (resize) {
+    document.querySelectorAll('.pic-blur > .blur>*, .pic-flip > .flip>*').forEach( el => {
+        
+        var auto = el.clientHeight;
+        var pic = el.parentElement.parentElement;
+        if (auto > el.parentElement.parentElement.clientHeight)
+        {
+            var borders = el.style.borderWidth.replace('px', '') * 2;
+            
+            pic.style.height = (auto + borders) + 'px';
+        }
+    });
+};
+
+/*
+ ** Picture Swap -- AutoTransform
+ *  #FIX slots.css CSS
+ */
+var picSwap = function () {
+    document.querySelectorAll('.pic-swap > .swap > *:first-child').forEach( el => {
+
+        var auto = el.clientHeight;
+        var pic = el.parentElement.parentElement;
+        
+        pic.style.height = auto + 'px';
+        
+        
+    });
+};
+
+/*
+ ** Picture Reflection -- effect
+ *  #FIX slots.css CSS
+ */
+var picReflection = function () {
+    document.querySelectorAll('.pic-reflection').forEach(el => {
+        var s = 1.25;
+        var auto = el.querySelector('[src]').clientHeight;
+        var source = el.querySelector('[src]').getAttribute('src');
+        var reflex = el.querySelector('[class^=reflection]');
+        el.style.height = (auto * s) + 'px';
+        el.style.marginBottom = (auto * 0.3) + 'px';
+        reflex.style.height = (auto * s) + 'px';
+        reflex.style.backgroundImage = "url(" + source + ")";
+    });
+};
+
+/*
+ ** Background HTML Images (requires CSS)
+ * <div class="bg-image-top bg-image-alt" style="height: 30vh">
+ *      <img class="d-none" src="/image/photo-alt.svg" title="BACKGROUND IMAGE" />
+ * </div>
+ */
+var imgBackground = function () {
+
+    document.querySelectorAll('.bg-image-bgs > img, .bg-image-fix > img, .bg-image-alt > img, .bg-image > img, .bg-image-top > img, .bg-image-center > img, .bg-image-bottom > img').forEach( el => {
+
+        var img = el;
+        var box = el.parentElement;
+        
+        img.style.display = 'none !important';
+        
+        box.style.backgroundImage = 'url(' + img.getAttribute('src') + ')';
+        
+    });
+};
+
+/*
+ ** imgChaflan: render linear-gradient background [default] color on an image layer
+ *  <div class="chaflan" data-bg="indigo">
+ *      <img src="/image/picture-alt.svg" alt="#" class="img-fluid"/>
+ *      <div class="chaflan-right-alt"></div>
+ *  </div>
+ */
+var imgChaflan = function () {
+    document.querySelectorAll('.chaflan').forEach((el) => {
+        
+        var bg = getComputedStyle(document.body).getPropertyValue('--bs-body-bg'); // var bg = '#FFF'; // default :root color
+        
+        if (typeof el.dataset.bg !== typeof undefined)
+        {
+            var color = el.dataset.bg;
+            if (color.substring(0, 3) === 'bg-')
+                var bg = getComputedStyle(document.body).getPropertyValue('--bs-' + color.substring(3)); // var bg = '#FFF'; // default :root color
+            else
+                var bg = el.dataset.bg;
+        }
+        
+        var size = '100'; // var bg = '#FFF'; // default :root color
+
+        if (typeof el.dataset.size !== typeof undefined)
+        {
+            var size = el.dataset.size.toString();
+
+            if (size == 'auto')
+            {
+                var size = el.querySelector(':not([class^="chaflan-"])').clientHeight;  //## scrollHeight o el otro?
+                var hg = el.querySelector(':not([class^="chaflan-"])').clientHeight;
+//                el.previousElementSibling.querySelector(':last').style.paddingBottom = hg / 2 + 'px';
+//                el.nextElementSibling.querySelector(':first').style.paddingTop= hg / 2 + 'px';
+            }
+        }
+        
+//        if (!self.height()) { self.css('height', '100%'); }
+
+        // X Vertical
+        var xHeight = el.parentElement.clientHeight;
+
+        var xWidth = size;
+        var xHipotenuse = Math.sqrt(Math.pow(xHeight, 2) + Math.pow(xWidth, 2) - 2 * xHeight * xWidth * Math.cos(90 * Math.PI / 180));
+        var xPartial = Math.pow(xHipotenuse, 2) + Math.pow(xWidth, 2) - Math.pow(xHeight, 2);
+        var degx = Math.acos(xPartial / (2 * xHipotenuse * xWidth)) * 180 / Math.PI;
+        // Y Horizontal
+        var yHeight = size;
+        var yWidth = el.parentElement.clientWidth;
+        var yHipotenuse = Math.sqrt(Math.pow(yHeight, 2) + Math.pow(yWidth, 2) - 2 * yHeight * yWidth * Math.cos(90 * Math.PI / 180));
+        var yPartial = Math.pow(yHipotenuse, 2) + Math.pow(yWidth, 2) - Math.pow(yHeight, 2);
+        var degy = Math.acos(yPartial / (2 * yHipotenuse * yWidth)) * 180 / Math.PI;
+
+        var min = '49.5', max = '50';
+        
+        var elemDiv;
+
+        let minus = 180 - degx;
+        let maxin = 180 + degy;
+
+        if (el.classList.contains('chaflan-right-top'))
+        {
+            el.classList.remove('chaflan-right-top');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-right-top');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-ritht-top') !== null)
+        {
+            el.querySelector('.chaflan-ritht-top').style.cssText = 'width:'+size+'px;background-image:linear-gradient(' + degx + 'deg, transparent ' + min + '%, ' + bg + ' ' + max + '%)';
+        }
+        
+        if (el.classList.contains('chaflan-right-bottom'))
+        {
+            el.classList.remove('chaflan-right-bottom');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-right-bottom');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-right-bottom') !== null)
+        {
+            el.querySelector('.chaflan-right-bottom').style.cssText = 'width:'+size+'px;background-image:linear-gradient(' + minus + 'deg, transparent ' + min + '%, ' + bg + ' ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-left-bottom'))
+        {
+            el.classList.remove('chaflan-left-bottom');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-left-bottom');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-left-bottom') !== null)
+        {
+            el.querySelector('.chaflan-left-bottom').style.cssText = 'width:'+size+'px;background-image:linear-gradient(' + degx + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-left-top'))
+        {
+            el.classList.remove('chaflan-left-top');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-left-top');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-left-top') !== null)
+        {
+            el.querySelector('.chaflan-left-top').style.cssText = 'width:'+size+'px;background-image:linear-gradient(' + minus + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-top-right'))
+        {
+            el.classList.remove('chaflan-top-right');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-top-right');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-top-right') !== null)
+        {
+            el.querySelector('.chaflan-top-right').style.cssText = 'height:'+size+'px;background-image:linear-gradient(' + maxin + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-top-left'))
+        {
+            el.classList.remove('chaflan-top-left');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-top-left');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-top-left') !== null)
+        {
+            el.querySelector('.chaflan-top-left').style.cssText = 'height:'+size+'px;background-image:linear-gradient(' + (-1 * maxin) + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-bottom-left'))
+        {
+            el.classList.remove('chaflan-bottom-left');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-bottom-left');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-bottom-left') !== null)
+        {
+            el.querySelector('.chaflan-bottom-left').style.cssText = 'height:'+size+'px;background-image:linear-gradient(' + degy + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+
+        if (el.classList.contains('chaflan-bottom-right'))
+        {
+            el.classList.remove('chaflan-bottom-right');
+            
+            elemDiv = document.createElement('div');
+            elemDiv.classList.add('chaflan-bottom-right');
+            el.appendChild(elemDiv);
+        }
+        if (el.querySelector('.chaflan-bottom-right') !== null)
+        {
+            el.querySelector('.chaflan-bottom-right').style.cssText = 'height:'+size+'px;background-image:linear-gradient(' + (-1 * degy) + 'deg, ' + bg + ' ' + min + '%, transparent ' + max + '%)';
+        }
+    });
+
+};
+
+/*
+ ** Extend Bootstrap modal: generate "Modal Box" layer view with auto content
+ *  References: https://getbootstrap.com/docs/4.0/components/modal/
+ *  <div type="button" class="modal-box" 
+ *      data-title="Intro con Youtube VIDEO"
+ *      data-content="https://www.youtube-nocookie.com/embed/OT9HsNszYCI?controls=0&amp;start=2" 
+ *      data-legend="Bienvenidos a este nuevo video del canal de Youtube" 
+ *      data-ratio="16x9" 
+ *      data-size="modal-lg"
+ *      data-class="youtube">
+ *    <img class="vh-15" src="/image/default/icon.svg" alt="Logo Video" />
+ *  </div>
+ */
+var bsModalBox = function () {
+    
+    document.querySelectorAll('.modal-box').forEach( (el) => {
+
+        var only    = el.dataset.only;
+        
+        var title   = el.dataset.title;
+        var content = el.dataset.content;
+        var legend  = el.dataset.legend;
+        
+        var ratio   = el.dataset.ratio;
+        var size    = el.dataset.size;
+        var style   = el.dataset.style;
+        
+        var target  = el.dataset.target;
+        var ajax    = el.dataset.ajax;
+        
+        
+        var sid = '#box' + Math.random().toString(16).substr(2, 3);
+        
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('dynamic');
+
+        if (typeof only === typeof undefined || only === false) {
+            only = false;
+        }
+        if (typeof size === typeof undefined || size === false) {
+            size = '';
+        }
+        if (typeof ajax === typeof undefined || ajax === false) {
+            ajax = false;
+        }
+        if (typeof ratio === typeof undefined || ratio === false) {
+            ratio = '16x9';
+        }
+        if (typeof target === typeof undefined || target === false) {
+            target = sid;
+        }
+        if (typeof title === typeof undefined || title === false) {
+            title = '';
+        }
+        if (typeof legend === typeof undefined || legend === false) {
+            legend = '';
+        }
+        if (typeof style === typeof undefined || style === false) {
+            style = '';
+        }
+        
+        sid = target;
+
+        if (typeof content === typeof undefined || content === false)
+        {
+            content = el.getAttribute('href'); // data-content is href link
+        }
+
+        if (typeof content === typeof undefined || content === false)
+        {
+            console.log('Undefined href/data-content of modal data-bs-target attribute!');
+            return false;
+        }
+        
+        var ext = content.split('.').pop();
+        if (content.indexOf('youtube') > -1)
+        {
+            ext = 'youtube';
+        }
+
+        target = target.replace('#', '');
+        
+        if (typeof el.dataset.bsToggle === typeof undefined || el.dataset.bsToggle === false)
+        {
+            el.setAttribute('data-bs-toggle', 'modal');
+            el.setAttribute('data-bs-target', sid);
+        }
+
+        var html = '';
+        
+        switch (ext) {
+            case 'svg':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+                html = '<img src="' + content + '" class="img-fluid ' + style + ' d-block mx-auto" />';
+                style = '';
+                break;
+            case 'pdf':
+                html = '<iframe src="' + content + '" class="w-100 ' + style + '" style="min-height: 75vh;"></iframe>';
+                style = '';
+                break;
+            case 'youtube':
+                html = '<div class="ratio ratio-' + ratio + '">' +
+                        '<iframe class="' + style + '" src="' + content + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+                       '</div>';
+                style = '';
+                
+                // Add / Remove src of iframe due to video still play if modal is closed 
+                document.addEventListener('hidden.bs.modal', (e) => {
+                    if(e.target.getAttribute('id') == target) {
+                        e.target.querySelector('iframe').removeAttribute("src");
+                    }
+                }, false);
+                document.addEventListener('show.bs.modal', (e) => {
+                    if(e.target.getAttribute('id') == target) {
+                        e.target.querySelector('iframe').setAttribute("src", content);
+                    }
+                }, false);
+                break;
+            default:
+            {
+                if (content === ext)
+                {
+                    ajax = true;
+                }
+                else
+                {
+                    console.log('ModalBox -- Check extension of data-content attribute!');
+                    
+                    return false;
+                }
+            }
+        }
+
+        
+        if (!size.length)
+            size = 'modal-lg';
+
+        if (legend.length)
+            legend = '<div class="modal-footer d-block text-center pt-2 pb-3">' + legend + '</div>';
+
+        
+        if (only)
+        {
+          var modal =
+            '<div class="modal fade" id="' + target + '" tabindex="-1" role="dialog" aria-labelledby="' + target + 'Title" aria-hidden="true">' +
+              '<div class="modal-dialog modal-dialog-centered ' + size + '" role="document"><!-- modal-sm modal-xl modal-lg /--> ' +
+                '<div class="modal-content '+style+'">' + html + '</div>' +
+              '</div>' +
+            '</div>';
+        }
+        else
+        {
+          var modal =
+            '<div class="modal fade" id="' + target + '" tabindex="-1" role="dialog" aria-labelledby="' + target + 'Title" aria-hidden="true">' +
+            '<div class="modal-dialog modal-dialog-centered ' + size + '" role="document"><!-- modal-sm modal-xl modal-lg /--> ' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<div class="modal-title" id="' + target + 'Title">' + title + '</div>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+            '</div>' +
+            '<div class="modal-body '+style+'">' + html + '</div>' +
+            legend +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        }
+        newDiv.innerHTML = modal;
+        document.body.append(newDiv);
+        
+        if (ajax)
+        {
+            html = '';
+            el.addEventListener('click', (e) => {
+                
+                makeAjax(content, 'get',  function(obj) { 
+                    var data = obj.responseText;
+                    if (only)
+                    {
+                        data = '<div class="modal-header border-0 position-absolute top-0 end-0 z-index-1 rounded p-1 m-1">' + 
+                                '<button type="button" class="btn-close btn-lg m-0 p-0" data-bs-dismiss="modal" aria-label="Close"></button>' +
+                           '</div>' + obj.responseText;
+                    }
+                    waitForElm(sid).then( (elm) => { 
+                        if (document.querySelector(sid + ' .modal-dialog').classList.contains('modal-size'))
+                        {
+                            if (data.length > 1200)
+                                document.querySelector(sid + ' .modal-dialog').classList.add('modal-xl');
+                            else if (data.length > 900)
+                                document.querySelector(sid + ' .modal-dialog').classList.add('modal-lg');
+                            else if (data.length < 400)
+                                document.querySelector(sid + ' .modal-dialog').classList.add('modal-sm');
+
+                            document.querySelector(sid + ' .modal-dialog').classList.remove('modal-size');
+                        }
+                        document.querySelector(sid).querySelector('.modal-body').innerHTML = data;
+                    });
+                });
+                
+            });
+        }
+        
+        return true;
+    });
+};
+
+/*
+ ** Active Boostrap Toggle Popover -- Requires BS data-bs-toggle="popover"
+ */
+var bsTogglePopover = function () {
+    var popovers = document.querySelectorAll('[data-bs-toggle="popover"]');
+    popovers.forEach(function(popover){
+        if (popover.hasAttribute('data-bs-target') && !popover.hasAttribute('data-bs-content'))
+        {
+            var target = popover.getAttribute('data-bs-target');
+            var content = document.querySelectorAll(target)[0].innerHTML;
+            
+            if (content.length)
+            {
+                popover.setAttribute('data-bs-html', 'true');
+                popover.setAttribute('data-bs-content', content);
+            }
+        }
+    });
+    
+    var popoverTriggerList = [].slice.call(popovers);
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+    });
+};
+
+/*
+ ** Active Boostrap Toggle Tooltip -- Requires BS data-bs-toggle="tooltip"
+ */
+var bsToggleTooltip = function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+};
+
+/*
+ ** Sidetab slot on mobile is a select-option this script simulates the select-option
+ *  click with the tabs normal behabiour 
+ */
+var sideTabs = function () {
+
+    document.querySelectorAll('.sidetab').forEach(function (el) {
+        
+        var select = el.querySelector('.change-nav');
+        var element = el.querySelector('.tab-content .active');
+        var sidetabActive = [].indexOf.call(element.parentElement.children, element);
+        
+        select[sidetabActive].selected = true;
+        
+        el.querySelector('.change-nav').addEventListener('change', (e) => {
+            var changeIndex = e.target.selectedIndex + 1;
+            e.target.closest('.sidetab').querySelector('.change-tab .nav-item:nth-child(' + changeIndex + ') .nav-link').click();
+        });
+    });
+
+};
+
+/*
+ ** Sidebar slot is a list-group but on mobile is a select-option. 
+ *  Make click navigation on select-option change 
+ */
+var sideBars = function () {
+
+    document.querySelectorAll('.nav-sidebar').forEach((el) => {
+        el.querySelector('.change-nav').addEventListener('change', (e) => {
+            window.open(e.target.value, '_self');
+        });
+    });
+
+};
+
+
+/*
+ ** Scroll spy BS standar behaviour. Supossed only one scrollspy
+ * <div data-bs-target="#simple-list-example" data-bs-spy="scroll" class="scrollspy vh-50 overflow-auto" tabindex="0" >
+ */
+var scrollspy = function () {
+    var items = document.querySelectorAll('.scrollspy');
+    items.forEach(el => {
+        if(! ("bsSpy" in el.dataset)) { 
+            el.dataset.bsSpy = 'scroll'; 
+        }
+        var scrollSpy =  new bootstrap.ScrollSpy(document.body, {
+           target: el.getAttribute('data-bs-target')
+        });
+    });
+};
+
+/*
+ ** On click hide element that has been clicked and a target id if set
+ */
+var closeClick = function () {
+    
+    document.querySelectorAll('.close-click').forEach( (el) => {
+        el.addEventListener('click', (e) => {
+            if (("target" in e.target.dataset)){
+                var element = e.target.closest('#'+e.target.dataset.target);
+                element.classList.add("d-none");
+            }
+            e.target.classList.add("d-none");
+        });
+
+    });
+
+};
+
+
+/*
+ * Carousel type Netflix
+ */
+function carouselFlixSetup(id)
+{
+    id.classList.remove('slide');
+    id.querySelectorAll('.carousel-inner > div').forEach((item) => { 
+        item.classList.remove('active'); 
+    });
+    id.querySelector('.carousel-inner > div:first-child').classList.add('active');
+
+    var group = '4';
+    if ( 'group' in id.dataset ) {
+        group = id.getAttribute('data-group');
+    }
+
+    var count = id.querySelector('.carousel-inner').children.length;
+    var steps = Math.ceil(count / group);  //Number of "screens"
+    var wide = id.parentElement.clientWidth; // current parent width
+    var witems = wide / group;  // Width/Items => Items width
+
+    id.setAttribute('data-count', count);
+    id.setAttribute('data-current', 1);
+    id.setAttribute('data-group', group);
+    id.setAttribute('data-steps', steps);
+    id.setAttribute('data-witems', witems);
+
+    id.style.width = wide + 'px';
+    id.querySelector('.carousel-inner').style.width = (witems * count) + 'px';
+    id.querySelectorAll('.carousel-inner > div').forEach((item) => { 
+        item.style.width = witems+'px'; 
+        item.style.left = '0px'; 
+    });
+
+    //Fix scale effect for first and last item visible
+    if (id.querySelectorAll('.pic-flix').length)
+    {
+        id.querySelectorAll('.pic-flix').forEach((item) => { 
+            id.querySelector('.carousel-inner > div:nth-child(' + group + 'n) .pic-flix').style.transformOrigin = '100% 50%'; 
+            id.querySelector('.carousel-inner > div:nth-child(' + group + 'n+1) .pic-flix').style.transformOrigin = '0% 50%'; 
+        });
+    }
+    
+    id.querySelector('.carousel-control-next').classList.add('ready');
+    id.querySelector('.carousel-control-prev').classList.remove('ready');
+}
+
+function carouselFlixCloseup(id)
+{
+    id.classList.add('slide');
+    
+    var elems = id.querySelectorAll('.carousel-inner > div').forEach((item) => { 
+        item.classList.remove('active'); 
+        item.style.width = '100%';
+    });
+    
+    var elem = id.querySelector('.carousel-inner > div:first-child');
+    elem.classList.add('active');
+    
+    id.style.width = '100%';
+    
+    elems = id.querySelector('.carousel-inner').style.width = ''; 
+}
+
+function eventFlixControl(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    var carousel    = e.target.closest('.carousel-flix');
+    var count       = carousel.getAttribute('data-count');
+    var current     = carousel.getAttribute('data-current');
+    var steps       = carousel.getAttribute('data-steps');
+    var group       = carousel.getAttribute('data-group');
+    var wide        = parseInt(carousel.style.width);
+    var position    = carousel.querySelector('.carousel-item').style.left;
+
+    steps   = parseInt(steps);
+    current = parseInt(current);
+    count   = parseInt(count);
+    group   = parseInt(group);
+    wide    = parseInt(wide);
+    position = parseInt(position);
+    
+    // Logic if go forward or backward
+    if ( (" " + e.target.className + " ").replace(/[\t\r\n\f]/g, " ").indexOf(" carousel-control-next ") > -1 ) 
+    {
+        if (current === steps)
+        {
+            carousel.querySelectorAll('.carousel-item').forEach( c => { c.style.left = 0 + 'px'; });
+            carousel.setAttribute('data-current', 1);
+        } else {
+            carousel.querySelectorAll('.carousel-item').forEach( c => {c.style.left= ((-1 * wide) + position) + 'px';});
+            carousel.setAttribute('data-current', current + 1);
+        }
+    }
+    if ( (" " + e.target.className + " ").replace(/[\t\r\n\f]/g, " ").indexOf(" carousel-control-prev ") > -1 ) 
+    {
+        if (current === 1)
+        {
+            carousel.querySelectorAll('.carousel-item').forEach( c => { c.style.left =  (((1 - steps) * wide) + position) + 'px'; });
+            carousel.setAttribute('data-current', steps);
+        } else {
+            carousel.querySelectorAll('.carousel-item').forEach( c => { c.style.left = (wide + position) + 'px'; });
+            carousel.setAttribute('data-current', current - 1);
+        }
+    }
+
+
+    //Visibility of controls next prev. When ready could be clicked
+    current = carousel.getAttribute('data-current');
+    if (current == 1)
+    {
+        carousel.querySelector('.carousel-control-next').classList.add('ready');
+        carousel.querySelector('.carousel-control-prev').classList.remove('ready');
+    } else if (current == steps) {
+        carousel.querySelector('.carousel-control-next').classList.remove('ready');
+        carousel.querySelector('.carousel-control-prev').classList.add('ready');
+    } else {
+        carousel.querySelector('.carousel-control-next').classList.add('ready');
+        carousel.querySelector('.carousel-control-prev').classList.add('ready');
+    }
+}
+
+function carouselFlixControl() {
+    
+    document.querySelectorAll('.carousel-flix').forEach( (el) => {
+        var elem;
+        if (minMedias('md')) {
+            elem = el.querySelectorAll('.carousel-flix .carousel-control-prev, .carousel-flix .carousel-control-next');
+            elem.forEach((i) => {
+                i.classList.add('click-binded');
+                i.addEventListener ('click', (e) => {
+                    eventFlixControl(e);
+                });
+            });
+        } else {
+            elem = el.querySelectorAll('.carousel-flix .carousel-control-prev, .carousel-flix .carousel-control-next');
+            elem.forEach((i) => {
+                i.removeEventListener('click', eventFlixControl);
+                i.classList.remove('click-binded');
+            });
+        }
+    });
+}
+
+function carouselFlix() {
+   document.querySelectorAll('.carousel-flix').forEach( (el) => {
+        if (minMedias('md'))
+        {
+            carouselFlixSetup(el);
+        } else {
+            carouselFlixCloseup(el);
+        }
+        el.querySelectorAll('button span').forEach( (n) => { n.style.pointerEvents = 'none'; } );
+    });
+    
+    carouselFlixControl();
+}
+
+/*
+ * Envio de formulario de tipo whatsapp. Recoge todos los campos del form
+ */
+var whatssappForm = function(){
+    let forms = document.getElementsByClassName("form-whatsapp");
+    
+    //Recorremos todos los posibles formularios
+    for(let i = 0; i < forms.length; i++) 
+    {
+        let form = forms[i].getElementsByTagName("form");
+        if (form.length > 0)
+        {
+            form[0].querySelector('[type="submit"]').addEventListener('click', function(e){
+                e.preventDefault();
+                let resetForm = this.closest('form');
+                let url = this.getAttribute('href');
+                let inputs = resetForm.elements;
+                let message = '';
+                for (let z = 0; z < inputs.length; z++)
+                {
+                    let prefix = ''; let suffix = '';
+                    // console.log(inputs[z].nodeName + ' / ' + inputs[z].type + ' / '+ inputs[z].value);
+                    // [INPUT / number / 3] - [TEXTAREA / textarea / hola me gustaria....] - [SELECT / select-one / 2]
+                    if (inputs[z].type !== 'submit')
+                    {
+                        if (("prefix" in inputs[z].dataset)) { message += inputs[z].dataset.prefix + ' '; }
+                        if (inputs[z].type !== 'date')
+                        {
+                            message += inputs[z].value + ' ';
+                        } else {  // Las fechas del input type="date" las recoge como 2022-12-25 las cambiamos a 25/12/2022
+                            message += inputs[z].value.split('-').reverse().join('/') + ' ';
+                        }
+                        
+                        if (("suffix" in inputs[z].dataset)) { message += inputs[z].dataset.suffix + ' '; }
+                    }
+                }
+                window.open(url+encodeURI(message), '_blank').focus();
+                resetForm.reset();
+            });
+        }
+    }
+    
+};
+
+/*
+ ** SeeZ Layers (perspective 3d effects): transforms all mousemove Z perspective
+ * <div class="seez" data-speed="30" data-height="400">
+ *     <div class="overlay" data-seen="-200" data-zoom="1">
+ *         <img class="see" src="/image/picture-alt.svg" alt="background"/>
+ *     </div>
+ *     <div class="overlay-bottom" data-seen="150" data-zoom="1.2">
+ *         <img class="see" src="/image/skyline-alt.svg" alt="background"/>
+ *     </div>
+ *     <div class="overlay-bottom" data-seen="-300">
+ *         <img class="see" src="/image/skyline.svg" alt="background"/>
+ *     </div>
+ * </div>
+ */
+var seez = function (wrap) {
+    
+    document.querySelectorAll('.seez .see').forEach(function (self, i) {
+        
+        var seen = 0; // by default
+        
+        if (self.parent.getAttribute('data-seen') !== undefined)
+        {
+            seen = self.parent().getAttribute('data-seen'); // seen perspective
+        }
+        seen = parseInt(seen);
+        self.parent.setAttribute('data-seen', seen); // save it
+
+        var zoom = 1; // by default
+        if (self.parent.getAttribute('data-zoom') !== undefined)
+        {
+            zoom = self.parent.getAttribute('data-zoom'); // seen perspective
+        }
+        zoom = parseFloat(zoom);
+        self.parent.setAttribute('data-zoom', zoom); // save it
+
+        self.style.transform = 'translateZ(' + seen + 'px) scale(' + zoom + ')';
+    });
+    document.querySelectorAll('.seez .see').forEach(function (self, i) {
+        
+        var speed = 1; // by default
+        
+        if (self.parent.getAttribute('data-speed') !== undefined)
+        {
+            speed = self.parent.getAttribute('data-speed'); // seen perspective
+        }
+        self.setAttribute('data-speed', speed); // save it
+
+        speed = 1 + (speed / 100);
+        var height = 0; // by default
+        if (self.getAttribute('data-height') !== undefined)
+        {
+            height = parseInt(self.getAttribute('data-height')); // seen perspective
+        }
+        if (height)
+        {
+            self.style.height = height + 'px';
+        }
+        self.setAttribute('data-height', height); // save it
+
+        let layer = this;
+        document.addEventListener('mousemove', function (e) {
+            // window 16:9
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 160 * speed;
+            let yAxis = ((window.innerHeight) / 2 - e.pageY) / 90 * speed;
+
+            self.style.transform = 'rotateY(' + xAxis + 'deg) rotateX(' + yAxis + 'deg)';
+        });
+    });
+};
+
+/*
+ ** GYRO -- 3D Hover Effect --> .seez > .see
+ ** https://codepen.io/markmiro/pen/wbqMPa --> motionZeffect
+ ** https://codepen.io/jsonc/pen/zYKgZgM
+ ** https://codesandbox.io/s/3d-hover-effect-hqy6h?file=/src/index.js:1039-1050
+ */
+var gyro = function () {
+    
+    var gyro = [];
+
+    document.querySelectorAll('.gyro').forEach(function (wrap, i) {
+
+        if (window.getComputedStyle(wrap).perspective != 'none')
+            wrap.parentNode.style.perspective = window.getComputedStyle(wrap).perspective;
+        else
+            wrap.parentNode.style.perspective = '700px';
+
+        wrap.style.transformStyle = "preserve-3d";
+
+        let gyroFX = window.matchMedia("(prefers-reduced-motion)");
+
+        if (!gyroFX.matches) {
+            wrap.addEventListener("mouseenter", (e, i) => {
+                gyro[i] = wrap.getBoundingClientRect();
+                wrap.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1.07, 1.07, 1.07)';
+            });
+            wrap.addEventListener("mousemove", (e, i) => {
+
+                const bounds = gyro[i];
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                const leftX = mouseX - bounds.x;
+                const topY = mouseY - bounds.y;
+                const center = {
+                    x: leftX - bounds.width / 2,
+                    y: topY - bounds.height / 2
+                };
+
+                const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
+
+                wrap.style.transform = 'scale3d(1.07, 1.07, 1.07) rotate3d( '+(center.y/100)+', -'+(center.x/100)+', 0, '+(Math.log(distance)*2)+'deg ) ';
+
+            });
+            wrap.addEventListener("mouseleave", (e, i) => {
+                wrap.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+        }
+
+    });
+};
+
+
+/*
+** WEAR -- Shiny Hover Effect --> .wear { color, background-color }
+** https://codepen.io/Shackles/pen/zYKXGez
+*/
+var wear = function () {
+    var wears = document.querySelectorAll('.wear');
+
+    wears.forEach(function (wear, i) {
+        var fx = document.createElement('div');
+        
+        fx.classList.add('wear-flash-ligth');
+        wear.appendChild(fx);
+        wear = fx;
+
+        wear.addEventListener("mousemove", (e) => {
+            const rect = wear.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / wear.clientWidth) * 100;
+            const y = ((e.clientY - rect.top) / wear.clientHeight) * 100;
+            
+            wear.style.background = 'radial-gradient( circle closest-corner at '+x+'% '+y+'%, '+window.getComputedStyle(wear.parentNode).color+', '+window.getComputedStyle(wear.parentNode).backgroundColor+')';
+        });
+        wear.addEventListener("mouseleave", (event) => {
+            wear.style.removeProperty("background");
+        });
+        
+    });
+};
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    
+    document.querySelector('meta[name=theme-color]').setAttribute('content', getComputedStyle(document.body).getPropertyValue('--bs-primary')); // custom mobile color
+
+    imgBackground();
+    imgChaflan();
+
+    bsModalBox();
+    bsTogglePopover();
+    bsToggleTooltip();
+
+    linkInOut();
+
+    sideTabs();
+    sideBars();
+    scrollspy();
+    
+    anime();
+    reach();
+
+    progress();
+    ganchor();
+    scroller();
+    counter();
+    writter();
+
+    closeClick();
+    
+    whatssappForm();
+    
+    gyro();
+    wear();
+    
+    Promise.resolve(cssMedias()).then(function(x) {
+        
+        carouselFlix();
+        picAutoHeight();
+        picReflection();
+        
+    });
+    
+});
+
+window.addEventListener("load", (event) => {
+    picSwap();
+});
+
+window.addEventListener('resize', (event) => {
+
+    picAutoHeight();
+    picSwap();
+
+    imgBackground();
+    imgChaflan();
+
+    scroller();
+    carouselFlix();
+    
+    seez();
+    gyro();
+    wear();
+    
+});

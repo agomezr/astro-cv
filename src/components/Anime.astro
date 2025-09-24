@@ -1,0 +1,72 @@
+---
+import '@node/animate.css/animate.min.css';
+
+const {
+	class: className = '',
+	style = '',
+	animate = 'pulse', /*bounce|flash|pulse|rubberBand|swing|tada|wobble... */
+	animation = '', /* fast|slow|faster|slower|repeat-2|infinite|delay-3s...*/
+	delay = '',
+	duration = '',
+	edge = '0',
+	outer = '0px',
+	erase = 'false',
+} = Astro.props;
+
+const hidden = Boolean(animate.match(/\w*In\w/)); // auto
+
+let animed = '';
+animation.split(' ').forEach((animate: string) => { animed+= ' animate__'+animate; });
+---
+<div class={'animate__animated '+className} data-animation={animation} data-animate={animate} data-hidden={hidden} data-delay={delay} data-duration={duration} data-edge={edge} data-outer={outer} data-erase={erase} style={style}>
+	<slot/>
+</div>
+<script>
+const loadAnimes = function(){
+	document.querySelectorAll('.animate__animated[data-animate]').forEach(item => {
+		const anime = item as HTMLElement; // Cast 'anime' to 'HTMLElement'
+		let options = { root: null, rootMargin: '-15%', threshold: 0.5 };
+
+		if (anime.dataset.edge)
+			options.threshold = Number(anime.dataset.edge);
+		if (anime.dataset.outer)
+			options.rootMargin = anime.dataset.outer+' 0px '+anime.dataset.outer+' 0px';
+
+		if ("delay" in anime.dataset)		anime.style.animationDelay = anime.dataset.delay;
+		if ("duration" in anime.dataset) 	anime.style.animationDuration = anime.dataset.duration;
+
+		if (Boolean(anime.dataset.hidden)) 	anime.style.opacity = '0';
+
+		let ioAnime = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+
+				const anime = entry.target as HTMLElement; // Cast 'anime' to 'HTMLElement'
+
+				if (entry.isIntersecting && anime.dataset.animate) {
+
+					const animation = anime.dataset.animate;
+
+					if (Boolean(anime.dataset.hidden)) anime.style.opacity = '1';
+					anime.classList.add('animate__'+animation);
+
+					anime.addEventListener('animationend', function(e){
+						e.stopPropagation();
+						anime.classList.remove('animate__animated', 'animate__'+animation);
+						if (JSON.parse(anime.dataset.erase) && anime.firstElementChild)
+						{
+							anime.firstElementChild.remove();
+						}
+					});
+
+					ioAnime.unobserve(anime);
+				}
+			});
+		}, options);
+
+		ioAnime.observe(anime);
+	});
+}
+
+document.addEventListener("astro:page-load", loadAnimes);
+document.addEventListener('DOMContentLoaded', loadAnimes);
+</script>

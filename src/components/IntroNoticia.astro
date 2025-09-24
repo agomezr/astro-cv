@@ -1,0 +1,39 @@
+---
+
+/*
+  <Tags 
+    tags={frontmatter.tags}
+    url ={'/blog/etiquetas/'} 
+    styles={{icon: 'bi bi-0-circle', blockClass:'hstack gap-5 pt-2'}}
+  />
+*/ 
+
+import Image from "./Image.astro";
+import Tags from "@components/Tags.astro";
+import { slugify } from "@components/Tag.astro";
+
+const {  frontmatter = null } = Astro.props;
+
+---
+
+{ frontmatter &&
+<div class="py-3 position-relative z-0">
+    <div class="w-lg-75 ms-auto">
+        <Image src={frontmatter.snap} class="img-fluid" />
+    </div>
+    <div class="w-lg-50 mt-n6 ">
+        <div class="animate__animate animate__bounceIn">
+            <div class="position-relative z-3 glass p-3 rounded shadow mx-2 mx-lg-0 mt-n3 mt-lg-0">
+                <h1 class="h2 lh-1 mb-2" transition:name={slugify(frontmatter.name)+slugify(frontmatter.snap)}>
+                    {frontmatter.name}
+                </h1>
+                <p class="tiny opacity-75 mb-2">{frontmatter.date}</p>
+                <p class="mb-2">
+                    {frontmatter.desc}
+                </p>
+                <Tags tags={frontmatter.tags}/>
+            </div>
+        </div>
+    </div>
+</div>
+}

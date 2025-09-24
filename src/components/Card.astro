@@ -1,0 +1,61 @@
+---
+import Image from "@components/Image.astro";
+import Tag, { slugify } from "@components/Tag.astro";
+
+const { name = null, term = null, desc = null, etag = 'h3', snap = null, text = null, icon = null, link = '#' } = Astro.props;
+const {
+	class: className = 'd-flex flex-column justify-content-between' ,
+	style = {
+		name: '',
+		desc: 'mb-2',
+		term: '',
+		snap: 'img-fluid mb-2',
+		icon: 'bi bi-chevron-right',
+		link: 'float-end mb-0 icon-link icon-link-hover stretched-link' }
+} = Astro.props;
+---
+<div class={'card card-body '+className}>
+
+	{ (snap && !Astro.slots.has('default')) &&
+		<div class="card-image">
+			<Image class={style.snap} transition:name={slugify(name)+slugify(snap)} src={snap} alt={ name+' '+term }/>
+		</div>
+		}
+	{ (name) &&
+	<div class="card-title">
+		<Tag html={etag}>
+			<span class={style['name']}>{name}</span>
+		</Tag>
+	</div>
+	}
+	{ (snap && Astro.slots.has('default')) &&
+	<div class="card-image">
+		<Image class={ style.snap } transition:name={ slugify(snap) } src={snap} alt={ name+': '+desc }/>
+	</div>
+	}
+	{ Astro.slots.has('default') &&
+	<slot/>
+	}
+	{ (desc) &&
+	<div class="card-text">
+		{ (desc) &&
+		<p class={`${style.desc} text-desc`}>
+			{desc}
+		</p>
+		}
+		{ (term) &&
+		<div class={`${style.term} text-term`}>
+			{term}
+		</div>
+		}
+		{ (link) &&
+			<a class={ style.link } href={link} title={(text !== null)? text: 'Más Información'}>
+				{ (text !== null)? text: 'Leer más' }
+				{ (icon || style.icon) &&
+				<span class={style.icon}>{ (icon !== null)? icon: '' }</span>
+				}
+			</a>
+		}
+	</div>
+	}
+</div>

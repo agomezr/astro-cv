@@ -1,0 +1,260 @@
+---
+import conf from '@conf';
+
+import Extras from '@components/Extras.astro';
+import Aptitudes from '@components/Aptitudes.astro';
+
+const { path = '/', media = 'lg' } = Astro.props;
+
+const query = ['sm', 'md', 'lg', 'xl', 'xxl'];
+let m = query.findIndex(n => n == media); // Devuelve 2
+
+export async function menus(path = null) {
+
+  const fso = import.meta.glob(['/src/pages/**/*.(mdx|astro)', '!/src/pages/**/_*.(mdx|astro)'], { eager: true }); // static path
+
+  let data = [];
+
+  data = Object.entries(fso).map((data: any) => {
+
+    let lnk:any = null;
+
+    if ('frontmatter' in data[1])
+      lnk = {...data[1]['frontmatter'], file: data[0], path: data[1]['url']};
+    else
+      lnk = {...data[1], file: data[0], path: data[1]['url']};
+
+    let menu = ('menu' in lnk)? lnk['menu']: false;
+
+    let url = lnk.path;
+    if (url == '') url = '/';
+    delete lnk.path;
+    const path = url.split('/'); path.pop();
+    let uri = path.join('/');
+    if (uri == '') uri = '/';
+
+    if (/\[\w+\]/.test(url))  url = url.replace(/\[\w+\]/, "1"); // Case of [page].astro
+
+    let flag = url.split('/').length - 2;
+
+    lnk = {...lnk, menu: menu, uri: uri, url: url, flag: flag}
+
+    return lnk;
+  });
+
+  if (path.length)
+    data = data.filter(lnk => (lnk.url.startsWith(path)));
+
+  data = data.filter(lnk => (lnk.name && lnk.desc && lnk.menu));
+
+  data = data.sort((x, y) => { return x.flag - y.flag; });
+
+  let tree = data.map((link) => {
+
+    let sort = (100*link.menu);
+
+    if (link.flag > 1)
+    {
+      let node = data.find(node => (node.url == link.uri && (node.flag+1) == link.flag) );
+      if (node)
+      {
+        sort = (100*node.menu)+link.menu;
+      }
+    }
+
+    return  {...link, sort: sort };
+
+  }).map((link) => {
+
+    let type = null;
+
+    if ('link' in link) type = link.link;
+
+    let o = data.findIndex(child => (link.url == child.uri && (link.flag+1) == child.flag) );
+
+    if (o >= 0)
+    {
+      type = 'node';
+    }
+
+    return  {...link, type: type };
+
+  }).map((link) => {
+    if (!link.flag)
+      link.type = 'home';
+    else if (link.type == null)
+      link.type = 'item';
+
+    return  {...link};
+
+  }).sort((x, y) => { return x.sort - y.sort; });
+
+  return tree;
+}
+
+let data = await menus(path); // pages function
+
+---
+<nav id="navigation" class={'navbar navbar-expand-'+media+' navbar-dark'}>
+  <button class={'navbar-toggler collapsed me-1 me-'+query[m-1]+'-0 border-0 pe-'+media+'-0'} type="button" data-bs-toggle="offcanvas" data-bs-target="#navsOffCanvas" aria-label="menu" aria-controls="navsOffCanvas">
+    <span class="bi nav-link bi-list"></span>
+  </button>
+  <div class={'offcanvas offcanvas-end offcanvas-'+media} tabindex="-1" id="navsOffCanvas" aria-labelledby="navsOffCanvasLabel">
+    <div class="offcanvas-header align-items-start mb-0">
+      <a class="img-fluid mx-auto w-30 me-n3" href="/" title={conf.term}>
+        <Extras view="navs-logo-mobile"/>
+      </a>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="cerrar"></button>
+    </div>
+    <div class="offcanvas-body pt-0">
+      <ul class={'navbar-nav justify-content-end flex-grow-1 mb-3 mb-'+media+'-0'}>
+      {
+        data.map((lnk, i) => 
+          <li class={ 
+              'nav-item ' +
+              ((lnk.flag <= 1 && lnk.type == 'node' && data[i+1] && data[i+1].type == 'item')? 'dropdown': '') +
+              ((lnk.flag >= 2 && lnk.type == 'node' && data[i+1] && data[i+1].type == 'item')? 'dropend': '')
+            }>
+            <a href={lnk.url} title={lnk.term?lnk.term:lnk.desc} data-menu={lnk.menu} class={
+                ((lnk.type == 'node' && data[i+1] && data[i+1].type == 'item')? 'nav-link dropdown-toggle': 'nav-link')
+                +
+                ((lnk.url == Astro.url.pathname)? ' active': '' )
+              } data-bs-toggle={ (lnk.type == 'node' && data[i+1] && data[i+1].type == 'item')? 'dropdown': '' }>
+              { lnk.name }
+            </a>
+            { (lnk.type == 'node' && data[i+1] && data[i+1].type == 'item' && (data[i+1].flag-1) == lnk.flag)? <Fragment set:html={'<ul class="dropdown-menu">'}/>: '' }
+            { (lnk.type == 'item' && data[i+1] && data[i+1].type == 'item' && data[i+1].flag == (lnk.flag-1))? <Fragment set:html={'</ul>'}/>: '' }
+            { (lnk.type == 'item' && !data[i+1])? '': '' }
+          </li>
+        )
+      }
+      </ul>
+      <div class={'d-block d-'+media+'-none offcanvas-footer'}>
+        <Extras view="navs-info-mobile"/>
+      </div>
+      <div class="d-lg-none">
+        <Aptitudes />
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style is:global>
+#navigation .offcanvas.show {
+  .dropdown-toggle::after {
+    content: none;
+  }
+  .dropdown-menu {
+    padding: 0;
+    border: 0;
+    .show {
+      box-shadow: 0;
+    }
+  }
+}
+#navigation .offcanvas:not(.show) {
+  .dropdown-menu {
+    box-shadow: none;
+    transition:all 0.3s ease-in-out;
+    height: 0;
+    &.nav-item {
+      padding: 0 0.5em;
+      white-space: nowrap;
+    }
+  }
+  .dropdown:hover > .dropdown-menu,
+  .dropend:hover > .dropdown-menu {
+    display: block;
+    margin-left: -0.5em;
+    height: auto;
+  }
+  .dropend:hover > .dropdown-menu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+  }
+  .dropend .dropdown-toggle {
+    margin-left: 1em;
+    padding: 0 0.125em;
+  }
+}
+</style>
+
+<script define:vars={{media}}>
+/**
+ * customToggler: set bootstrap "desktop dropdown hover menu" && "mobile toggle accordion menu"
+ */
+const customToggler = function(){
+
+  const mq = getComputedStyle(document.documentElement).getPropertyValue('--bs-breakpoint-'+media);
+
+  document.querySelectorAll('#navigation a.dropdown-toggle').forEach(function (item) {
+
+    if (window.matchMedia('(max-width: '+mq+')').matches)
+    {
+      if (!item.classList.contains('plus'))
+      {
+          let node = item.parentElement;
+          let plus = item.cloneNode(false);
+
+          plus.className = 'btn btn-link nav-link px-2 ';
+          plus.setAttribute('tabindex', '-1');
+          plus.innerHTML = '<span class="bi bi-chevron-bar-down my-auto"></span>';
+
+          node.prepend(plus);
+          item.removeAttribute('data-bs-toggle');
+          plus.className+= 'position-relative float-end plus-toggle';
+          item.classList.add('plus');
+      }
+    }
+    else
+    {
+      if (item.previousElementSibling && item.previousElementSibling.classList.contains('plus-toggle')) {
+        item.previousElementSibling.remove();
+      }
+      // Item Node fixing click link
+      item.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.matchMedia('(min-width: '+mq+')').matches) {
+          location.href = item.href;
+        }
+      });
+    }
+  });
+}
+
+/**
+ * activeParents: set bootstrap "menu && submenu active" link of parent node
+ */
+const activeParents = function(){
+
+  const activeElement = document.querySelector('#navigation .dropdown > .nav-link + .dropdown-menu > .nav-item > .active');
+
+  if (activeElement) {
+    const parentElement = activeElement.parentNode?.parentNode?.parentElement;
+
+    if (parentElement) {
+      parentElement.classList.add('active');
+
+      if (window.matchMedia('(max-width: '+mq+')').matches) {
+        parentElement.classList.add('show');
+      }
+    }
+  }
+}
+
+/*
+** Init it!
+*/
+window.addEventListener('resize', () => {
+  customToggler();
+});
+document.addEventListener('DOMContentLoaded', function () {
+  customToggler(); activeParents();
+});
+document.addEventListener("astro:page-load", () => {
+  customToggler(); activeParents();
+});
+
+</script>

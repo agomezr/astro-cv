@@ -1,0 +1,73 @@
+---
+import { Image } from "astro:assets";
+
+import conf from '@conf'; 
+import figura from "@assets/foto-dni.png";
+
+import ThemeSwitch from "@components/ThemeSwitch.astro";
+import Socials from '@components/Socials.astro';
+import Aptitudes from "@components/Aptitudes.astro";
+import Anime from "@components/Anime.astro";
+
+
+const {
+  name = conf.name,
+  entity = conf.entity,
+  email = conf.email,
+  social = conf.social
+} = Astro.props;
+
+---
+<div id="sidebar" class="h-100">
+
+  <div class="position-relative h-100 ">
+    <div class="sticky-top pt-3 text-white vh-md-100">
+
+      <div class="container">
+        <div class="row align-items-center mb-3 mb-md-0">
+          <div class="col-4 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 mb-md-1">
+            <div class="text-center position-relative">
+              <Anime animate="fadeIn">
+              <a href="/" title={`Volver a ${name}`} class="">
+                <Image
+                  src={figura} alt={`Imagen de ${entity}`}
+                  class="img-fluid" transition:name="foto"
+                />
+              </a>
+              </Anime>
+              <div class="position-absolute bottom-0 end-0">
+                <ThemeSwitch />
+              </div>
+            </div>
+          </div>
+          <div class="col-7 col-md-12 mb-md-3">
+            <div class="text-white text-md-center">
+              <p class="h4 font-extrabold text-balance mb-0">Alberto Gómez</p>
+              <p class="opacity-50 small text-uppercase mb-0">Programador Web Fullstack</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <Socials />
+
+      <div class="hstack gap-2 justify-content-center pb-3">
+        <a href="/portfolio/1" title="Portfolio de proyectos" class="btn btn-primary">
+          Portfolio
+        </a>
+        <a href="/blog" title="Artículos" class="btn btn-primary">
+          Artículos
+        </a>
+      </div>
+
+      <div class="d-none d-md-block">
+        <Aptitudes />  
+      </div>
+      
+
+    </div>
+    
+  </div>
+
+</div>

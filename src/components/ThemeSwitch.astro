@@ -1,0 +1,107 @@
+<button
+  id="bd-theme" class="nav-link" type="button" data-bs-theme-value="light" title="Cambiar tema" >
+  <span class="visually-hidden">Cambiar tema</span>
+</button>
+
+<script>
+  /*!
+    * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/);
+    */
+    const setTheme = function (theme = null) {
+
+      let selected = (localStorage.getItem("theme"))? localStorage.getItem("theme"): 'light';
+
+      theme = (theme === null)? selected: theme;
+
+      if (theme === "light")
+        document.documentElement.setAttribute("data-bs-theme", "light");
+      else
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+
+      const elementoId = document.querySelector("#bd-theme");
+      if (elementoId){
+        elementoId.setAttribute("data-bs-theme-value", theme);
+      }
+      localStorage.setItem("theme", theme);
+
+      return theme;
+    };
+
+    function reloadTheme() {
+      // Navigator Init Theme
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        var current = setTheme();
+        document.documentElement.setAttribute("data-bs-theme", current);
+      });
+      // User Change Current Theme
+      document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          setTheme((toggle.getAttribute("data-bs-theme-value") === 'light')? "dark" : "light");
+        });
+      });
+
+      setTheme(); // theme by default (null)
+    }
+
+    document.addEventListener("astro:page-load", () => {
+      reloadTheme();
+    });
+</script>
+
+<style>
+  #bd-theme {
+    position: relative;
+    width: 2em;
+    height: 1em;
+    border-radius: 1em;
+    transition: all 0.5s ease-in;
+    /* circulo */
+    &:before {
+      content: "";
+      width: 1em;
+      height: 1em;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      border-radius: 50%;
+      background-color: #fff;
+      transition: all 0.5s ease-in;
+    }
+    /* icono */
+    &:after {
+      position: absolute;
+      font-family: "bootstrap-icons" !important;
+      height: 100%;
+      font-size: 0.8em;
+      display: flex;
+      align-items: center;
+      padding: 0px 0.1em;
+      transition: all 0.5s ease-in;
+    }
+    &[data-bs-theme-value] {
+      outline: 1px solid rgba(var(--bs-light-rgb),.2);
+    }
+    &[data-bs-theme-value="dark"] {
+      background-color: rgba(var(--bs-light-rgb), 0.2);
+      &:after {
+        content: "\F494";
+        top: 0;
+        left: 50%;
+        color: var(--bs-body-bg);
+      }
+    }
+    &[data-bs-theme-value="light"] {
+      background-color: var(--bs-primary);
+      &:before {
+        left: 0%;
+      }
+      &:after {
+        content: "\F1D3";
+        position: absolute;
+        top: 0;
+        left: 0%;
+        color: var(--bs-primary);
+      }
+    }
+  }
+</style>
